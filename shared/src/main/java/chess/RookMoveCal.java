@@ -12,34 +12,34 @@ public class RookMoveCal {
 
 
             //down
-            for(int i = row+1; i <= 8; i++){
-                if(add_move(board, myPosition, row, col, color, moves)) break;
+            for(int i = row; i < 8; i++){
+                if(add_move(board, myPosition, i, col, color, moves)) break;
             }
             //up
-            for(int i = row-1; i >= 0; i--){
-                if(add_move(board, myPosition, row, col, color, moves)) break;
+            for(int i = row; i >= 0; i--){
+                if(add_move(board, myPosition, i, col, color, moves)) break;
             }
             //right
-            for(int i = col+1; i <= 8; i++){
-                if(add_move(board, myPosition, row, col, color, moves)) break;
+            for(int i = col; i < 8; i++){
+                if(add_move(board, myPosition, row, i, color, moves)) break;
             }
             //left
-            for(int i = col-1; i >= 0; i--){
-                if(add_move(board, myPosition, row, col, color, moves)) break;
+            for(int i = col; i >= 0; i--){
+                if(add_move(board, myPosition, row, i, color, moves)) break;
             }
         return moves;
     }
 
     private boolean add_move(ChessBoard board, ChessPosition start, int row, int col, ChessGame.TeamColor color, Collection<ChessMove> moves){
         ChessPosition endPosition = new ChessPosition(row, col);
-        if(inbounds(endPosition)) return false;
+        if(!inbounds(endPosition)) return false;
         ChessPiece piece = board.getPiece(endPosition);
         if(piece == null){
             moves.add(new ChessMove(start, endPosition, null));
             return true;
         }else if (piece.getTeamColor() != color){
             moves.add(new ChessMove(start, endPosition, null));
-            return true;
+            return false;
         }else
             return false;
         }
@@ -49,6 +49,7 @@ public class RookMoveCal {
         int col = position.getColumn();
         return row >= 0 && row < 8 && col >= 0 && col < 8;
     }
+
 }
 
 
