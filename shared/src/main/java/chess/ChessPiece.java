@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -42,6 +43,20 @@ public class ChessPiece {
         return this.piecetype;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessPiece piece = (ChessPiece) o;
+        return teamcolor == piece.teamcolor && piecetype == piece.piecetype;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(teamcolor, piecetype);
+    }
+
     /**
      * Calculates all the positions a chess piece can move to
      * Does not take into account moves that are illegal due to leaving the king in
@@ -50,6 +65,8 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
-    }
-}
+            return new RookMoveCal().pieceMoves(board, myPosition);
+
+
+
+}}
