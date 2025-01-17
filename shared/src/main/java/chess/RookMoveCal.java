@@ -11,20 +11,20 @@ public class RookMoveCal {
             ChessGame.TeamColor color = board.getPiece(myPosition).getTeamColor();
 
 
-            //down
-            for(int i = row+1; i < 8; i++){
+            //up
+            for(int i = row+1; i <= 8; i++){
                 if(!add_move(board, myPosition, i, col, color, moves)) break;
             }
-            //up
-            for(int i = row-1; i >= 0; i--){
+            //down
+            for(int i = row-1; i >= 1; i--){
                 if(!add_move(board, myPosition, i, col, color, moves)) break;
             }
             //right
-            for(int i = col+1; i < 8; i++){
+            for(int i = col+1; i <= 8; i++){
                 if(!add_move(board, myPosition, row, i, color, moves)) break;
             }
             //left
-            for(int i = col-1; i >= 0; i--){
+            for(int i = col-1; i >= 1; i--){
                 if(!add_move(board, myPosition, row, i, color, moves)) break;
             }
         return moves;
@@ -39,7 +39,7 @@ public class RookMoveCal {
             return true;
         }else if (piece.getTeamColor() != color){
             moves.add(new ChessMove(start, endPosition, null));
-            return true;
+            return false;
         }else
             return false;
         }
@@ -47,7 +47,7 @@ public class RookMoveCal {
     private boolean inbounds(ChessPosition position){
         int row = position.getRow();
         int col = position.getColumn();
-        return row >= 0 && row < 8 && col >= 0 && col < 8;
+        return row >= 0 && row <= 8 && col >= 0 && col <= 8;
     }
 
 }

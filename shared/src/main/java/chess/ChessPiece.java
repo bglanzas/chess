@@ -15,6 +15,8 @@ public class ChessPiece {
     private PieceType piecetype;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+        this.teamcolor = pieceColor;
+        this.piecetype = type;
     }
 
     /**
@@ -43,6 +45,21 @@ public class ChessPiece {
         return this.piecetype;
     }
 
+
+    /**
+     * Calculates all the positions a chess piece can move to
+     * Does not take into account moves that are illegal due to leaving the king in
+     * danger
+     *
+     * @return Collection of valid moves
+     */
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+            return new RookMoveCal().pieceMoves(board, myPosition);
+
+
+
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {
@@ -57,16 +74,11 @@ public class ChessPiece {
         return Objects.hash(teamcolor, piecetype);
     }
 
-    /**
-     * Calculates all the positions a chess piece can move to
-     * Does not take into account moves that are illegal due to leaving the king in
-     * danger
-     *
-     * @return Collection of valid moves
-     */
-    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-            return new RookMoveCal().pieceMoves(board, myPosition);
-
-
-
-}}
+    @Override
+    public String toString() {
+        return "ChessPiece{" +
+                "teamcolor=" + teamcolor +
+                ", piecetype=" + piecetype +
+                '}';
+    }
+}
