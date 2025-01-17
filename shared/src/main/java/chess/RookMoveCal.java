@@ -12,20 +12,20 @@ public class RookMoveCal {
 
 
             //down
-            for(int i = row; i < 8; i++){
-                if(add_move(board, myPosition, i, col, color, moves)) break;
+            for(int i = row+1; i < 8; i++){
+                if(!add_move(board, myPosition, i, col, color, moves)) break;
             }
             //up
-            for(int i = row; i >= 0; i--){
-                if(add_move(board, myPosition, i, col, color, moves)) break;
+            for(int i = row-1; i >= 0; i--){
+                if(!add_move(board, myPosition, i, col, color, moves)) break;
             }
             //right
-            for(int i = col; i < 8; i++){
-                if(add_move(board, myPosition, row, i, color, moves)) break;
+            for(int i = col+1; i < 8; i++){
+                if(!add_move(board, myPosition, row, i, color, moves)) break;
             }
             //left
-            for(int i = col; i >= 0; i--){
-                if(add_move(board, myPosition, row, i, color, moves)) break;
+            for(int i = col-1; i >= 0; i--){
+                if(!add_move(board, myPosition, row, i, color, moves)) break;
             }
         return moves;
     }
@@ -39,7 +39,7 @@ public class RookMoveCal {
             return true;
         }else if (piece.getTeamColor() != color){
             moves.add(new ChessMove(start, endPosition, null));
-            return false;
+            return true;
         }else
             return false;
         }

@@ -28,20 +28,6 @@ public class ChessMove {
        return this.startposition;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        ChessMove chessMove = (ChessMove) o;
-        return Objects.equals(startposition, chessMove.startposition) && Objects.equals(endposition, chessMove.endposition);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(startposition, endposition);
-    }
-
     /**
      * @return ChessPosition of ending location
      */
@@ -57,5 +43,19 @@ public class ChessMove {
      */
     public ChessPiece.PieceType getPromotionPiece() {
         return this.promotion;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessMove chessMove = (ChessMove) o;
+        return Objects.equals(startposition, chessMove.startposition) && Objects.equals(endposition, chessMove.endposition) && promotion == chessMove.promotion;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(startposition, endposition, promotion);
     }
 }
