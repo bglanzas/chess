@@ -5,7 +5,7 @@ import java.util.Collection;
 
 public class KnightMoveCal {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        Collection<ChessBoard> moves = new ArrayList<ChessBoard>();
+        Collection<ChessMove> moves = new ArrayList<ChessMove>();
         int row = myPosition.getRow();
         int col= myPosition.getColumn();
         ChessGame.TeamColor color = board.getPiece(myPosition).getTeamColor();
@@ -14,16 +14,14 @@ public class KnightMoveCal {
 
 
 
-
-
-
-
-
-
-
-
-
-
+        add_move(board, myPosition, row-1, col-2, color, moves);
+        add_move(board, myPosition, row-1, col+2, color, moves);
+        add_move(board, myPosition, row-2, col-1, color, moves);
+        add_move(board, myPosition, row-2, col+1, color, moves);
+        add_move(board, myPosition, row+1, col+2, color, moves);
+        add_move(board, myPosition, row+1, col-2, color, moves);
+        add_move(board, myPosition, row+2, col-1, color, moves);
+        add_move(board, myPosition, row+2, col+1, color, moves);
 
 
         return moves;
@@ -46,7 +44,7 @@ public class KnightMoveCal {
     private boolean inbounds(ChessPosition position){
         int row = position.getRow();
         int col = position.getColumn();
-        return row >= 0 && row <= 8 && col >= 0 && col <= 8;
+        return row >= 1 && row <= 8 && col >= 1 && col <= 8;
     }
 
 }
