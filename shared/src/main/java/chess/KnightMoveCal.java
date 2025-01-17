@@ -3,27 +3,31 @@ package chess;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class KingMoveCal {
-    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition){
-        Collection<ChessMove> moves = new ArrayList<ChessMove>();
+public class KnightMoveCal {
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+        Collection<ChessBoard> moves = new ArrayList<ChessBoard>();
         int row = myPosition.getRow();
-        int col = myPosition.getColumn();
+        int col= myPosition.getColumn();
         ChessGame.TeamColor color = board.getPiece(myPosition).getTeamColor();
 
-        add_move(board, myPosition, row+1, col, color, moves);
-        add_move(board, myPosition, row, col+1, color, moves);
-        add_move(board, myPosition, row-1, col, color, moves);
-        add_move(board, myPosition, row, col-1, color, moves);
-        add_move(board, myPosition, row-1, col-1, color, moves);
-        add_move(board, myPosition, row+1, col+1, color, moves);
-        add_move(board, myPosition, row-1, col+1, color, moves);
-        add_move(board, myPosition, row+1, col-1, color, moves);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         return moves;
     }
-
-
 
     private boolean add_move(ChessBoard board, ChessPosition start, int row, int col, ChessGame.TeamColor color, Collection<ChessMove> moves){
         ChessPosition endPosition = new ChessPosition(row, col);
@@ -44,4 +48,5 @@ public class KingMoveCal {
         int col = position.getColumn();
         return row >= 0 && row <= 8 && col >= 0 && col <= 8;
     }
+
 }
