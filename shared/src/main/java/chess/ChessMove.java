@@ -10,9 +10,9 @@ import java.util.Objects;
  */
 public class ChessMove {
 
-    private ChessPosition startposition;
-    private ChessPosition endposition;
-    private ChessPiece.PieceType promotion;
+    private final ChessPosition startposition;
+    private final ChessPosition endposition;
+    private final ChessPiece.PieceType promotion;
 
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
                      ChessPiece.PieceType promotionPiece) {
@@ -42,7 +42,7 @@ public class ChessMove {
      * @return Type of piece to promote a pawn to, or null if no promotion
      */
     public ChessPiece.PieceType getPromotionPiece() {
-        return this.promotion;
+            return this.promotion;
     }
 
     @Override
