@@ -77,6 +77,6 @@ public class PawnMoveCal {
     private boolean inbounds(ChessPosition position){
         int row = position.getRow();
         int col = position.getColumn();
-        return row >= 0 && row <= 8 && col >= 0 && col <= 8;
+        return row >= 1 && row <= 8 && col >= 1 && col <= 8;
     }
 }

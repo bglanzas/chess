@@ -54,10 +54,15 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-            return new PawnMoveCal().pieceMoves(board, myPosition);
-
-
-
+        ChessPiece piece = board.getPiece(myPosition);
+        return switch (piece.getPieceType()) {
+            case PAWN -> new PawnMoveCal().pieceMoves(board, myPosition);
+            case KNIGHT -> new KnightMoveCal().pieceMoves(board, myPosition);
+            case ROOK -> new RookMoveCal().pieceMoves(board, myPosition);
+            case KING -> new KingMoveCal().pieceMoves(board, myPosition);
+            case QUEEN -> new QueenMoveCal().pieceMoves(board, myPosition);
+            case BISHOP -> new BishopMoveCal().pieceMoves(board, myPosition);
+        };
     }
 
     @Override
