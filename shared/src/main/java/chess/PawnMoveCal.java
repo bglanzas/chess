@@ -34,14 +34,14 @@ public class PawnMoveCal {
                 moves.add(new ChessMove(start, endPosition, ChessPiece.PieceType.ROOK));
                 moves.add(new ChessMove(start, endPosition, ChessPiece.PieceType.BISHOP));
                 return true;}
-            if(start.getRow() == 7 && color == ChessGame.TeamColor.BLACK){
+            if(start.getRow() == 7 && color == ChessGame.TeamColor.BLACK){ //move twice
                 ChessPosition double_position = new ChessPosition(row-1, col);
                 ChessPiece piece2 = board.getPiece(double_position);
                 if(piece2 == null) {
                     moves.add(new ChessMove(start, double_position, null));
                 }
             }
-            if(start.getRow() == 2 && color == ChessGame.TeamColor.WHITE){
+            if(start.getRow() == 2 && color == ChessGame.TeamColor.WHITE){ //move twice
                 ChessPosition double_position2 = new ChessPosition(row+1, col);
                 ChessPiece piece3 = board.getPiece(double_position2);
                 if(piece3 == null) {

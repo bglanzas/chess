@@ -2,6 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 public class BishopMoveCal {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition){
@@ -9,7 +10,6 @@ public class BishopMoveCal {
         int row = myPosition.getRow();
         int col = myPosition.getColumn();
         ChessGame.TeamColor color = board.getPiece(myPosition).getTeamColor();
-
 
         //up right
         for(int i = row+1, j = col+1; i <= 8 && j <=8; i++, j++){
@@ -43,6 +43,7 @@ public class BishopMoveCal {
         }else
             return true;
     }
+
 
     private boolean inbounds(ChessPosition position){
         int row = position.getRow();
