@@ -90,4 +90,15 @@ public class ChessBoard {
     public int hashCode() {
         return Arrays.deepHashCode(squares);
     }
+
+
+    public void movingPiece(ChessPosition startPosition, ChessPosition endPosition)  {
+        ChessPiece piece = getPiece(startPosition);
+        if(piece == null) {
+            return;
+        }
+        addPiece(endPosition, piece);
+        addPiece(startPosition, null);
+    }
+
 }
