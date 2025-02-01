@@ -78,6 +78,13 @@ public class ChessGame {
             throw new InvalidMoveException("Invalid move");
         }
 
+        //board.movePiece(endPosition, startPosition);
+
+        if(currentTurnColor == TeamColor.WHITE) {
+            currentTurnColor = TeamColor.BLACK;
+        }else if(currentTurnColor == TeamColor.BLACK) {
+            currentTurnColor = TeamColor.WHITE;
+        }
     }
 
     /**
@@ -87,7 +94,26 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        ChessPosition kingPosition = findKing(teamColor);
+        if (kingPosition == null) {
+            return false;
+        }
+        for(int row = 1; row <= 8; row++) {
+            for(int col = 1; col <= 8; col++) {
+                ChessPosition position = new ChessPosition(row, col);
+                ChessPiece piece = board.getPiece(position);
+                if(piece != null && piece.getTeamColor() != teamColor) {
+                    Collection<ChessMove> opp_moves = piece.pieceMoves(board, position);
+                    for(ChessMove move : opp_moves) {
+                        if(move.getEndPosition().equals(kingPosition)) {
+                            return true;
+                        }
+                    }
+
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -128,4 +154,18 @@ public class ChessGame {
     public ChessBoard getBoard() {
         return board;
     }
+
+    private ChessPosition findKing(TeamColor teamColor) {
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <= 8; col++) {
+                ChessPosition position = new ChessPosition(row, col);
+                ChessPiece piece = board.getPiece(position);
+                if(piece != null && piece.getTeamColor() == teamColor && piece.getPieceType() == ChessPiece.PieceType.KING) {
+                    return position;
+                }
+            }
+        }
+        return null;
+    }
+
 }
