@@ -77,6 +77,15 @@ public class ChessBoard {
         squares[6][7] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
     }
 
+    public void movingPiece(ChessPosition startPosition, ChessPosition endPosition)  {
+        ChessPiece piece = getPiece(startPosition);
+        if(piece == null) {
+            return;
+        }
+        addPiece(endPosition, piece);
+        addPiece(startPosition, null);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {
@@ -89,16 +98,6 @@ public class ChessBoard {
     @Override
     public int hashCode() {
         return Arrays.deepHashCode(squares);
-    }
-
-
-    public void movingPiece(ChessPosition startPosition, ChessPosition endPosition)  {
-        ChessPiece piece = getPiece(startPosition);
-        if(piece == null) {
-            return;
-        }
-        addPiece(endPosition, piece);
-        addPiece(startPosition, null);
     }
 
 }

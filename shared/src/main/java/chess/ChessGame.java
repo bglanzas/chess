@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -9,7 +10,7 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessGame {
-    private  ChessBoard board;
+    private ChessBoard board;
     private TeamColor currentTurnColor = TeamColor.WHITE;
     public ChessGame() {
 
@@ -143,8 +144,8 @@ public class ChessGame {
                 if(piece != null && piece.getTeamColor() == teamColor) {
                     Collection<ChessMove> moves = validMoves(position);
                     for(ChessMove move : moves) {
-                        ChessPiece cap_Piece = board.getPiece(move.getEndPosition());
 
+                        ChessPiece cap_Piece = board.getPiece(move.getEndPosition());
                         board.movingPiece(position, move.getEndPosition());
                         boolean stillCheck = isInCheck(teamColor);
 
@@ -194,7 +195,7 @@ public class ChessGame {
                 }
             }
         }
-        return true;
+        return false;
     }
 
     /**
@@ -212,7 +213,7 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        return board;
+        return this.board;
     }
 
     private ChessPosition findKing(TeamColor teamColor) {
@@ -226,6 +227,20 @@ public class ChessGame {
             }
         }
         return null;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessGame chessGame = (ChessGame) o;
+        return Objects.equals(board, chessGame.board) && currentTurnColor == chessGame.currentTurnColor;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(board, currentTurnColor);
     }
 
 }
