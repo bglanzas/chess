@@ -80,7 +80,7 @@ public class ChessGame {
         }
 
         ChessPiece newPiece = board.getPiece(endPosition);
-        board.movingPiece(startPosition, endPosition);
+        board.movingPiece(startPosition, endPosition, move.getPromotionPiece());
 
         if(isInCheck(currentTurnColor)) {
             board.addPiece(endPosition, board.getPiece(endPosition));
@@ -146,10 +146,10 @@ public class ChessGame {
                     for(ChessMove move : moves) {
 
                         ChessPiece cap_Piece = board.getPiece(move.getEndPosition());
-                        board.movingPiece(position, move.getEndPosition());
+                        board.movingPiece(position, move.getEndPosition(), piece.getPieceType());
                         boolean stillCheck = isInCheck(teamColor);
 
-                        board.movingPiece(move.getEndPosition(), position);
+                        board.movingPiece(move.getEndPosition(), position, piece.getPieceType());
                         board.addPiece(move.getEndPosition(), cap_Piece);
                         if(!stillCheck) {
                             return false;
@@ -182,11 +182,11 @@ public class ChessGame {
                     Collection<ChessMove> moves = validMoves(position);
                     for(ChessMove move : moves) {
                         ChessPiece cap_Piece = board.getPiece(move.getEndPosition());
-                        board.movingPiece(position, move.getEndPosition());
+                        board.movingPiece(position, move.getEndPosition(), piece.getPieceType());
 
                         boolean noMoves = isInCheck(teamColor);
 
-                        board.movingPiece(move.getEndPosition(), position);
+                        board.movingPiece(move.getEndPosition(), position, piece.getPieceType());
                         board.addPiece(move.getEndPosition(), cap_Piece);
                         if(noMoves) {
                             return false;

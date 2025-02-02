@@ -77,10 +77,20 @@ public class ChessBoard {
         squares[6][7] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
     }
 
-    public void movingPiece(ChessPosition startPosition, ChessPosition endPosition)  {
+    public void movingPiece(ChessPosition startPosition, ChessPosition endPosition, ChessPiece.PieceType promotionType)  {
         ChessPiece piece = getPiece(startPosition);
         if(piece == null) {
             return;
+        }
+        if(piece.getPieceType() == ChessPiece.PieceType.PAWN) {
+            if(piece.getTeamColor() == ChessGame.TeamColor.WHITE && endPosition.getRow() == 8){
+                piece = new ChessPiece(piece.getTeamColor(), promotionType);
+            }
+        }
+        if(piece.getPieceType() == ChessPiece.PieceType.PAWN) {
+            if(piece.getTeamColor() == ChessGame.TeamColor.BLACK && endPosition.getRow() == 1){
+                piece = new ChessPiece(piece.getTeamColor(), promotionType);
+            }
         }
         addPiece(endPosition, piece);
         addPiece(startPosition, null);
