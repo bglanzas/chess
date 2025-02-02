@@ -32,7 +32,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        return squares[8-position.getRow()][position.getColumn()-1];
+        return squares[8 - position.getRow()][position.getColumn() - 1];
     }
 
     /**
@@ -99,5 +99,6 @@ public class ChessBoard {
     public int hashCode() {
         return Arrays.deepHashCode(squares);
     }
+
 
 }

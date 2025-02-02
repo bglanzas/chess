@@ -80,7 +80,7 @@ public class ChessGame {
         }
 
         ChessPiece newPiece = board.getPiece(endPosition);
-        board.movingPiece(endPosition, startPosition);
+        board.movingPiece(startPosition, endPosition);
 
         if(isInCheck(currentTurnColor)) {
             board.addPiece(endPosition, board.getPiece(endPosition));
@@ -170,7 +170,7 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        if(!isInCheck(teamColor)) {
+        if(isInCheck(teamColor)) {
             return false;
         }
 
@@ -188,7 +188,7 @@ public class ChessGame {
 
                         board.movingPiece(move.getEndPosition(), position);
                         board.addPiece(move.getEndPosition(), cap_Piece);
-                        if(!noMoves) {
+                        if(noMoves) {
                             return false;
                         }
                     }
@@ -204,6 +204,9 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
+        if(board == null) {
+            throw new IllegalArgumentException("SetBoard cannot be null");
+        }
         this.board = board;
     }
 
@@ -213,6 +216,9 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
+        if(board == null) {
+            throw new IllegalArgumentException("getBoard cannot be null");
+        }
         return this.board;
     }
 
