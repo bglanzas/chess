@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -52,7 +53,19 @@ public class ChessGame {
       if (piece == null) {
           return null;
       }
-      return piece.pieceMoves(board, startPosition);
+      Collection<ChessMove> moves = piece.pieceMoves(board, startPosition);
+      Collection<ChessMove> legalMove = new ArrayList<>();
+      for(ChessMove move : moves){
+          ChessPiece old_piece = board.getPiece(move.getEndPosition());
+          board.movingPiece(move.getStartPosition(), move.getEndPosition(), move.getPromotionPiece());
+          if(!isInCheck(piece.getTeamColor())){
+              legalMove.add(move);
+          }
+          board.movingPiece(move.getEndPosition(), move.getStartPosition(), move.getPromotionPiece());
+          board.addPiece(move.getEndPosition(), old_piece);
+      }
+
+      return legalMove;
     }
 
     /**
@@ -189,7 +202,7 @@ public class ChessGame {
                         board.movingPiece(move.getEndPosition(), position, piece.getPieceType());
                         board.addPiece(move.getEndPosition(), cap_Piece);
                         if(noMoves) {
-                            return false;
+                            return true;
                         }
                     }
                 }
@@ -234,6 +247,8 @@ public class ChessGame {
         }
         return null;
     }
+
+
 
     @Override
     public boolean equals(Object o) {
