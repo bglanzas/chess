@@ -14,7 +14,8 @@ public class ChessGame {
     private ChessBoard board;
     private TeamColor currentTurnColor = TeamColor.WHITE;
     public ChessGame() {
-
+        this.board = new ChessBoard();
+        board.resetBoard();
     }
 
     /**
@@ -56,13 +57,15 @@ public class ChessGame {
       Collection<ChessMove> moves = piece.pieceMoves(board, startPosition);
       Collection<ChessMove> legalMove = new ArrayList<>();
       for(ChessMove move : moves){
-          ChessPiece old_piece = board.getPiece(move.getEndPosition());
-          board.movingPiece(move.getStartPosition(), move.getEndPosition(), move.getPromotionPiece());
+          ChessPiece old_piece = board.getPiece(move.getStartPosition());
+          ChessPiece new_piece_pos = board.getPiece(move.getEndPosition());
+
+          board.movingPiece(move.getStartPosition(), move.getEndPosition(), old_piece.getPieceType());
           if(!isInCheck(piece.getTeamColor())){
               legalMove.add(move);
           }
-          board.movingPiece(move.getEndPosition(), move.getStartPosition(), move.getPromotionPiece());
-          board.addPiece(move.getEndPosition(), old_piece);
+          board.movingPiece(move.getEndPosition(), move.getStartPosition(), old_piece.getPieceType());
+          board.addPiece(move.getEndPosition(), new_piece_pos);
       }
 
       return legalMove;
@@ -77,6 +80,7 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
        ChessPosition startPosition = move.getStartPosition();
        ChessPosition endPosition = move.getEndPosition();
+       ChessPiece.PieceType promotion = move.getPromotionPiece();
 
        ChessPiece piece = board.getPiece(startPosition);
        if (piece == null) {
@@ -93,7 +97,7 @@ public class ChessGame {
         }
 
         ChessPiece newPiece = board.getPiece(endPosition);
-        board.movingPiece(startPosition, endPosition, move.getPromotionPiece());
+        board.movingPiece(startPosition, endPosition, promotion);
 
         if(isInCheck(currentTurnColor)) {
             board.addPiece(endPosition, board.getPiece(endPosition));
@@ -195,20 +199,20 @@ public class ChessGame {
                     Collection<ChessMove> moves = validMoves(position);
                     for(ChessMove move : moves) {
                         ChessPiece cap_Piece = board.getPiece(move.getEndPosition());
-                        board.movingPiece(position, move.getEndPosition(), piece.getPieceType());
+                        board.movingPiece(position, move.getEndPosition(), move.getPromotionPiece());
 
                         boolean noMoves = isInCheck(teamColor);
 
                         board.movingPiece(move.getEndPosition(), position, piece.getPieceType());
                         board.addPiece(move.getEndPosition(), cap_Piece);
-                        if(noMoves) {
-                            return true;
+                        if(!noMoves) {
+                            return false;
                         }
                     }
                 }
             }
         }
-        return false;
+        return true;
     }
 
     /**
@@ -217,9 +221,6 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        if(board == null) {
-            throw new IllegalArgumentException("SetBoard cannot be null");
-        }
         this.board = board;
     }
 
@@ -229,9 +230,6 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        if(board == null) {
-            throw new IllegalArgumentException("getBoard cannot be null");
-        }
         return this.board;
     }
 
