@@ -87,14 +87,14 @@ public class ChessGame {
            throw new InvalidMoveException("There is no piece there");
        }
 
-       if(piece.getTeamColor() != currentTurnColor) {
-           throw new InvalidMoveException("Its not your turn!");
-       }
-
-       Collection<ChessMove> validMoves = validMoves(startPosition);
+        Collection<ChessMove> validMoves = validMoves(startPosition);
         if(!validMoves.contains(move)) {
             throw new InvalidMoveException("Invalid move");
         }
+
+       if(piece.getTeamColor() != currentTurnColor) {
+           throw new InvalidMoveException("Its not your turn!");
+       }
 
         ChessPiece newPiece = board.getPiece(endPosition);
         board.movingPiece(startPosition, endPosition, promotion);
