@@ -15,7 +15,7 @@ public class UserDAO {
         if (users.containsKey(user.username())){
             throw new DataAccessException("User already exists");
         }
-        users.put(user.name(), user);
+        users.put(user.username(), user);
     }
 
     public UserData getUser(String username){
