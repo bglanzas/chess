@@ -1,19 +1,32 @@
 package server;
 
-import spark.*;
+import dataAccess.AuthDAO;
+import dataAccess.GameDAO;
+import dataAccess.UserDAO;
+import service.ClearService;
+import spark.Spark;
 
 public class Server {
-
     public int run(int desiredPort) {
         Spark.port(desiredPort);
-
         Spark.staticFiles.location("web");
 
-        // Register your endpoints and handle exceptions here.
+        // ✅ Initialize DAO instances
+        UserDAO userDAO = new UserDAO();
+        GameDAO gameDAO = new GameDAO();
+        AuthDAO authDAO = new AuthDAO();
 
-        //This line initializes the server and can be removed once you have a functioning endpoint 
+        // ✅ Initialize Service
+        ClearService clearService = new ClearService(userDAO, gameDAO, authDAO);
+
+        // ✅ Initialize Handler
+        ClearHandler clearHandler = new ClearHandler(clearService);
+
+        // ✅ Register the /db DELETE endpoint
+        Spark.delete("/db", clearHandler.clearDatabase);
+
+        // ✅ Start Spark Server
         Spark.init();
-
         Spark.awaitInitialization();
         return Spark.port();
     }
