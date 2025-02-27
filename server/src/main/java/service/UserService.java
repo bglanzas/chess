@@ -1,4 +1,4 @@
-package server;
+package service;
 
 import dataAccess.AuthDAO;
 import dataAccess.DataAccessException;
@@ -12,16 +12,19 @@ public class UserService {
     private final UserDAO userDAO;
     private final AuthDAO authDAO;
 
-    public UserService(UserDAO userDAO, AuthDAO authDAO){
+    public UserService(UserDAO userDAO, AuthDAO authDAO) {
         this.userDAO = userDAO;
         this.authDAO = authDAO;
     }
 
-    public AuthData register(UserData user) throws DataAccessException{
-        if(user.username() == null || user.password() == null || user.email() == null){
-            throw new DataAccessException("Bad Request");
+    public AuthData register(UserData user) throws DataAccessException {
+        if (user.username() == null || user.username().isEmpty() ||
+                user.password() == null || user.password().isEmpty() ||
+                user.email() == null || user.email().isEmpty()) {
+            throw new DataAccessException("Bad request");
         }
-        if(userDAO.getUser(user.username())!= null){
+
+        if (userDAO.getUser(user.username()) != null) {
             throw new DataAccessException("Username already taken");
         }
 
@@ -31,10 +34,5 @@ public class UserService {
         authDAO.insertAuth(auth);
         return auth;
     }
-    public void logout(String authToken) throws DataAccessException{
-        if(authDAO.getAuth(authToken) == null){
-            throw new DataAccessException("Unauthorized");
-        }
-        authDAO.deleteAuth(authToken);
-    }
+
 }

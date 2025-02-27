@@ -11,21 +11,21 @@ public class Server {
         Spark.port(desiredPort);
         Spark.staticFiles.location("web");
 
-        // ✅ Initialize DAO instances
+
         UserDAO userDAO = new UserDAO();
         GameDAO gameDAO = new GameDAO();
         AuthDAO authDAO = new AuthDAO();
 
-        // ✅ Initialize Service
+
         ClearService clearService = new ClearService(userDAO, gameDAO, authDAO);
 
-        // ✅ Initialize Handler
+
         ClearHandler clearHandler = new ClearHandler(clearService);
+        RegisterHandler registerHandler = new RegisterHandler(userDAO, authDAO);
 
-        // ✅ Register the /db DELETE endpoint
         Spark.delete("/db", clearHandler.clearDatabase);
+        Spark.post("/user", registerHandler.register);
 
-        // ✅ Start Spark Server
         Spark.init();
         Spark.awaitInitialization();
         return Spark.port();
