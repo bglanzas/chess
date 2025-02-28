@@ -35,4 +35,22 @@ public class UserService {
         return auth;
     }
 
+    public AuthData login(String username, String password)throws DataAccessException{
+        if(username == null || username.isEmpty() ||
+            password == null || password.isEmpty()){
+            throw new DataAccessException("Bad request");
+        }
+
+        UserData user = userDAO.getUser(username);
+        if(user == null || !user.password().equals(password)){
+            throw new DataAccessException("Unauthorized");
+        }
+
+        String authToken = UUID.randomUUID().toString();
+        AuthData auth = new AuthData(authToken, username);
+        authDAO.insertAuth(auth);
+        return auth;
+    }
+
+
 }

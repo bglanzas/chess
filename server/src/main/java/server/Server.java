@@ -22,9 +22,11 @@ public class Server {
 
         ClearHandler clearHandler = new ClearHandler(clearService);
         RegisterHandler registerHandler = new RegisterHandler(userDAO, authDAO);
+        LoginHandler loginHandler = new LoginHandler(userDAO, authDAO);
 
         Spark.delete("/db", clearHandler.clearDatabase);
         Spark.post("/user", registerHandler.register);
+        Spark.post("/session", loginHandler.login);
 
         Spark.init();
         Spark.awaitInitialization();
