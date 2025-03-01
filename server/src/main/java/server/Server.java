@@ -24,11 +24,13 @@ public class Server {
         RegisterHandler registerHandler = new RegisterHandler(userDAO, authDAO);
         LoginHandler loginHandler = new LoginHandler(userDAO, authDAO);
         LogoutHandler logoutHandler = new LogoutHandler(authDAO);
+        ListGameHandler listGameHandler = new ListGameHandler(gameDAO, authDAO);
 
         Spark.delete("/db", clearHandler.clearDatabase);
         Spark.post("/user", registerHandler.register);
         Spark.post("/session", loginHandler.login);
         Spark.delete("/session", logoutHandler.logout);
+        Spark.get("/game", listGameHandler.listGame);
 
         Spark.init();
         Spark.awaitInitialization();
