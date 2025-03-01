@@ -14,7 +14,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class JoinListGamesTest {
+public class AllGamesTest {
     private static UserDAO userDAO;
     private static AuthDAO authDAO;
     private static GameDAO gameDAO;
@@ -93,6 +93,31 @@ public class JoinListGamesTest {
         assertThrows(DataAccessException.class, () ->
                         gameService.joinGame(auth.authToken(), 99999, "WHITE"),
                 "Joining a non-existent game should fail.");
+    }
+
+    @Test
+    @Order(5)
+    public void testCreateGamePositive() throws DataAccessException {
+        // Register and log in user
+        UserData user = new UserData("testUser", "password", "email@example.com");
+        userService.register(user);
+        AuthData auth = userService.login("testUser", "password");
+
+        // Create game
+        GameData game = gameService.createGame(auth.authToken(), "TestGame");
+
+        assertNotNull(game, "Game creation should return a valid GameData.");
+        assertEquals("TestGame", game.gameName(), "Game name should match the created game.");
+        assertTrue(game.gameID() > 0, "Game ID should be a positive integer.");
+    }
+
+
+    @Test
+    @Order(6)
+    public void testCreateGameNegative() {
+        assertThrows(DataAccessException.class, () ->
+                        gameService.createGame("invalidToken", "InvalidGame"),
+                "Creating a game with an invalid auth token should fail.");
     }
 }
 
