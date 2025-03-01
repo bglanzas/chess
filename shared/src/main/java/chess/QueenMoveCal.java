@@ -4,49 +4,26 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class QueenMoveCal {
-    public Collection<ChessMove>pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        Collection<ChessMove> moves = new ArrayList<ChessMove>();
-        int row = myPosition.getRow();
-        int col = myPosition.getColumn();
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+        Collection<ChessMove> moves = new ArrayList<>();
         ChessGame.TeamColor color = board.getPiece(myPosition).getTeamColor();
 
-        //up right
-        for(int i = row+1, j = col+1; i <= 8 && j <=8; i++, j++){
-            if(!MoveUtils.addMove(board, myPosition, i, j, color, moves)) {break;}
-        }
-        //down left
-        for(int i = row-1, j = col-1; i >= 1 && j >=1; i--, j--){
-            if(!MoveUtils.addMove(board, myPosition, i, j, color, moves)){ break;}
-        }
-        //up left
-        for(int i = row+1, j = col-1; i <= 8 && j>=1; i++, j--){
-            if(!MoveUtils.addMove(board, myPosition, i, j, color, moves)) {break;}
-        }
-        //down right
-        for(int i = row-1, j = col+1; i >= 1 && j<=8; i--, j++){
-            if(!MoveUtils.addMove(board, myPosition, i, j, color, moves)) {break;}
-        }
-        //up
-        for(int i = row+1; i <= 8; i++){
-            if(!MoveUtils.addMove(board, myPosition, i, col, color, moves)) {break;}
-        }
-        //down
-        for(int i = row-1; i >= 1; i--){
-            if(!MoveUtils.addMove(board, myPosition, i, col, color, moves)) {break;}
-        }
-        //right
-        for(int i = col+1; i <= 8; i++){
-            if(!MoveUtils.addMove(board, myPosition, row, i, color, moves)) {break;}
-        }
-        //left
-        for(int i = col-1; i >= 1; i--){
-            if(!MoveUtils.addMove(board, myPosition, row, i, color, moves)) {break;}
-        }
+
+        QueenMoveUtils.addMovesRookBishop(board, myPosition, 1, 0, color, moves);  // Up
+        QueenMoveUtils.addMovesRookBishop(board, myPosition, -1, 0, color, moves); // Down
+        QueenMoveUtils.addMovesRookBishop(board, myPosition, 0, 1, color, moves);  // Right
+        QueenMoveUtils.addMovesRookBishop(board, myPosition, 0, -1, color, moves); // Left
+
+
+        QueenMoveUtils.addMovesRookBishop(board, myPosition, 1, 1, color, moves);  // Up-right
+        QueenMoveUtils.addMovesRookBishop(board, myPosition, -1, -1, color, moves); // Down-left
+        QueenMoveUtils.addMovesRookBishop(board, myPosition, 1, -1, color, moves);  // Up-left
+        QueenMoveUtils.addMovesRookBishop(board, myPosition, -1, 1, color, moves);  // Down-right
 
         return moves;
-
     }
 }
+
 
 
 
