@@ -9,10 +9,12 @@ import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.*;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class JoinGameTest {
+public class JoinListGamesTest {
     private static UserDAO userDAO;
     private static AuthDAO authDAO;
     private static GameDAO gameDAO;
@@ -32,9 +34,36 @@ public class JoinGameTest {
         gameDAO.clear();
     }
 
-
     @Test
     @Order(1)
+    public void testListGamesPositive() throws DataAccessException {
+        // Register and log in user
+        UserData user = new UserData("testUser", "password", "email@example.com");
+        userService.register(user);
+        AuthData auth = userService.login("testUser", "password");
+
+        // Create games
+        gameService.createGame(auth.authToken(), "Game1");
+        gameService.createGame(auth.authToken(), "Game2");
+
+        // List games
+        List<GameData> games = gameService.listGames(auth.authToken());
+
+        assertNotNull(games, "List of games should not be null.");
+        assertEquals(2, games.size(), "There should be exactly 2 games listed.");
+    }
+
+
+    @Test
+    @Order(2)
+    public void testListGamesNegative() {
+        assertThrows(DataAccessException.class, () ->
+                        gameService.listGames("invalidToken"),
+                "Listing games with an invalid token should fail.");
+    }
+
+    @Test
+    @Order(3)
     public void testJoinGamePositive() throws DataAccessException {
         // Register and log in user
         UserData user = new UserData("player1", "password", "email@example.com");
@@ -54,7 +83,7 @@ public class JoinGameTest {
 
 
     @Test
-    @Order(2)
+    @Order(4)
     public void testJoinGameNegative() throws DataAccessException {
         // Register and log in user
         UserData user = new UserData("player3", "password", "email@example.com");
@@ -65,6 +94,5 @@ public class JoinGameTest {
                         gameService.joinGame(auth.authToken(), 99999, "WHITE"),
                 "Joining a non-existent game should fail.");
     }
-
 }
 

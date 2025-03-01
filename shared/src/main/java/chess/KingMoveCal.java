@@ -10,14 +10,14 @@ public class KingMoveCal {
         int col = myPosition.getColumn();
         ChessGame.TeamColor color = board.getPiece(myPosition).getTeamColor();
 
-        add_move(board, myPosition, row+1, col, color, moves);
-        add_move(board, myPosition, row, col+1, color, moves);
-        add_move(board, myPosition, row-1, col, color, moves);
-        add_move(board, myPosition, row, col-1, color, moves);
-        add_move(board, myPosition, row-1, col-1, color, moves);
-        add_move(board, myPosition, row+1, col+1, color, moves);
-        add_move(board, myPosition, row-1, col+1, color, moves);
-        add_move(board, myPosition, row+1, col-1, color, moves);
+        addMove(board, myPosition, row+1, col, color, moves);
+        addMove(board, myPosition, row, col+1, color, moves);
+        addMove(board, myPosition, row-1, col, color, moves);
+        addMove(board, myPosition, row, col-1, color, moves);
+        addMove(board, myPosition, row-1, col-1, color, moves);
+        addMove(board, myPosition, row+1, col+1, color, moves);
+        addMove(board, myPosition, row-1, col+1, color, moves);
+        addMove(board, myPosition, row+1, col-1, color, moves);
 
 
         return moves;
@@ -25,7 +25,7 @@ public class KingMoveCal {
 
 
 
-    private boolean add_move(ChessBoard board, ChessPosition start, int row, int col, ChessGame.TeamColor color, Collection<ChessMove> moves){
+    private boolean addMove(ChessBoard board, ChessPosition start, int row, int col, ChessGame.TeamColor color, Collection<ChessMove> moves){
         ChessPosition endPosition = new ChessPosition(row, col);
         if(!inbounds(endPosition)) {return false;}
         ChessPiece piece = board.getPiece(endPosition);
