@@ -41,7 +41,7 @@ public class RookMoveCal {
             moves.add(new ChessMove(start, endPosition, null));
             return false;
         }else
-            return false;
+            {return false;}
         }
 
     private boolean inbounds(ChessPosition position){

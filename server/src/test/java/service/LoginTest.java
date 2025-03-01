@@ -27,7 +27,7 @@ public class LoginTest {
 
     @Test
     @Order(1)
-    public void testLoginUser_Positive() throws DataAccessException {
+    public void testLoginUserPositive() throws DataAccessException {
         UserData user = new UserData("testUser", "password", "email@example.com");
         userService.register(user);
 
@@ -41,7 +41,7 @@ public class LoginTest {
 
     @Test
     @Order(2)
-    public void testLoginUser_Negative() throws DataAccessException {
+    public void testLoginUserNegative() throws DataAccessException {
         UserData user = new UserData("testUser", "password", "email@example.com");
         userService.register(user);
 

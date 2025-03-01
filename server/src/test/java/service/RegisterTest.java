@@ -25,7 +25,7 @@ public class RegisterTest {
 
     @Test
     @Order(1)
-    public void testRegisterUser_Positive() throws DataAccessException {
+    public void testRegisterPositive() throws DataAccessException {
         userService.register(new UserData("testUser", "password", "email@example.com")); // ✅ FIXED
         UserData user = userDAO.getUser("testUser");
 
@@ -37,7 +37,7 @@ public class RegisterTest {
 
     @Test
     @Order(2)
-    public void testRegisterUser_Negative() {
+    public void testRegisterNegative() {
         assertThrows(DataAccessException.class, () ->
                         userService.register(new UserData("", "password", "email@example.com")), // ✅ FIXED
                 "Registering a user without a username should fail.");

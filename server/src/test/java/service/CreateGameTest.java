@@ -34,7 +34,7 @@ public class CreateGameTest {
 
     @Test
     @Order(1)
-    public void testCreateGame_Positive() throws DataAccessException {
+    public void testCreateGamePositive() throws DataAccessException {
         // Register and log in user
         UserData user = new UserData("testUser", "password", "email@example.com");
         userService.register(user);
@@ -51,7 +51,7 @@ public class CreateGameTest {
 
     @Test
     @Order(2)
-    public void testCreateGame_Negative_InvalidToken() {
+    public void testCreateGameNegative() {
         assertThrows(DataAccessException.class, () ->
                         gameService.createGame("invalidToken", "InvalidGame"),
                 "Creating a game with an invalid auth token should fail.");

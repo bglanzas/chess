@@ -29,7 +29,7 @@ public class ClearTest {
 
     @Test
     @Order(1)
-    public void testClearDatabase_Positive() throws DataAccessException {
+    public void testClearPositive() throws DataAccessException {
         userDAO.insertUser(new UserData("testUser", "password", "email@example.com"));
         gameDAO.insertGame(new GameData(0, null, null, "Chess Game", null));
 
@@ -43,7 +43,7 @@ public class ClearTest {
 
     @Test
     @Order(2)
-    public void testClearDatabase_Negative() throws DataAccessException {
+    public void testClearNegative() throws DataAccessException {
         assertDoesNotThrow(() -> {
             userDAO.clear();
             gameDAO.clear();

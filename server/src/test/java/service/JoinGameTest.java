@@ -35,7 +35,7 @@ public class JoinGameTest {
 
     @Test
     @Order(1)
-    public void testJoinGame_Positive_White() throws DataAccessException {
+    public void testJoinGamePositive() throws DataAccessException {
         // Register and log in user
         UserData user = new UserData("player1", "password", "email@example.com");
         userService.register(user);
@@ -55,7 +55,7 @@ public class JoinGameTest {
 
     @Test
     @Order(2)
-    public void testJoinGame_Negative_InvalidGameID() throws DataAccessException {
+    public void testJoinGameNegative() throws DataAccessException {
         // Register and log in user
         UserData user = new UserData("player3", "password", "email@example.com");
         userService.register(user);

@@ -57,7 +57,7 @@ public class QueenMoveCal {
             moves.add(new ChessMove(start, endPosition, null));
             return true;
         }else
-            return true;
+        {return true;}
     }
 
     private boolean inbounds(ChessPosition position){

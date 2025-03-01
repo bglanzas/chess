@@ -35,17 +35,17 @@ public class PawnMoveCal {
                 moves.add(new ChessMove(start, endPosition, ChessPiece.PieceType.BISHOP));
                 return true;}
             if(start.getRow() == 7 && color == ChessGame.TeamColor.BLACK){ //move twice
-                ChessPosition double_position = new ChessPosition(row-1, col);
-                ChessPiece piece2 = board.getPiece(double_position);
+                ChessPosition doublePosition = new ChessPosition(row-1, col);
+                ChessPiece piece2 = board.getPiece(doublePosition);
                 if(piece2 == null) {
-                    moves.add(new ChessMove(start, double_position, null));
+                    moves.add(new ChessMove(start, doublePosition, null));
                 }
             }
             if(start.getRow() == 2 && color == ChessGame.TeamColor.WHITE){ //move twice
-                ChessPosition double_position2 = new ChessPosition(row+1, col);
-                ChessPiece piece3 = board.getPiece(double_position2);
+                ChessPosition doublePosition2 = new ChessPosition(row+1, col);
+                ChessPiece piece3 = board.getPiece(doublePosition2);
                 if(piece3 == null) {
-                    moves.add(new ChessMove(start, double_position2, null));
+                    moves.add(new ChessMove(start, doublePosition2, null));
                 }
             }
             moves.add(new ChessMove(start, endPosition, null));

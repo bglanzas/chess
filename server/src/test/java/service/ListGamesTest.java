@@ -36,7 +36,7 @@ public class ListGamesTest {
 
     @Test
     @Order(1)
-    public void testListGames_Positive() throws DataAccessException {
+    public void testListGamesPositive() throws DataAccessException {
         // Register and log in user
         UserData user = new UserData("testUser", "password", "email@example.com");
         userService.register(user);
@@ -56,7 +56,7 @@ public class ListGamesTest {
 
     @Test
     @Order(2)
-    public void testListGames_Negative() {
+    public void testListGamesNegative() {
         assertThrows(DataAccessException.class, () ->
                         gameService.listGames("invalidToken"),
                 "Listing games with an invalid token should fail.");

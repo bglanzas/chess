@@ -28,7 +28,7 @@ public class LogoutTest {
 
     @Test
     @Order(1)
-    public void testLogoutUser_Positive() throws DataAccessException {
+    public void testLogoutUserPositive() throws DataAccessException {
         // Register and login user
         UserData user = new UserData("testUser", "password", "email@example.com");
         userService.register(user);
@@ -44,7 +44,7 @@ public class LogoutTest {
 
     @Test
     @Order(2)
-    public void testLogoutUser_Negative_InvalidToken() throws DataAccessException {
+    public void testLogoutUserNegative() throws DataAccessException {
         assertThrows(DataAccessException.class, () ->
                         userService.logout("invalidToken"),
                 "Logging out with an invalid token should fail.");
