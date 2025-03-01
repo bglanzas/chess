@@ -26,5 +26,20 @@ public class GameService {
         return gameDAO.listGames();
     }
 
+    public GameData createGame(String authToken, String gameName)throws DataAccessException{
+        AuthData auth = authDAO.getAuth(authToken);
+        if(auth == null){
+            throw new DataAccessException("Unauthorized");
+        }
 
+        if(gameName == null || gameName.isEmpty()){
+            throw new DataAccessException("Bad request");
+        }
+
+        int gameID = UUID.randomUUID().hashCode();
+        GameData newGame = new GameData(gameID, null, null, gameName, null);
+
+        gameDAO.insertGame(newGame);
+        return newGame;
+    }
 }
