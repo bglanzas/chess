@@ -199,13 +199,13 @@ public class ChessGame {
                 if(piece != null && piece.getTeamColor() == teamColor) {
                     Collection<ChessMove> moves = validMoves(position);
                     for(ChessMove move : moves) {
-                        ChessPiece cap_Piece = board.getPiece(move.getEndPosition());
+                        ChessPiece capPiece = board.getPiece(move.getEndPosition());
                         board.movingPiece(position, move.getEndPosition(), move.getPromotionPiece());
 
                         boolean noMoves = isInCheck(teamColor);
 
                         board.movingPiece(move.getEndPosition(), position, piece.getPieceType());
-                        board.addPiece(move.getEndPosition(), cap_Piece);
+                        board.addPiece(move.getEndPosition(), capPiece);
                         if(!noMoves) {
                             return false;
                         }

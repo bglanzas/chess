@@ -52,7 +52,9 @@ public class ChessMove {
             return false;
         }
         ChessMove chessMove = (ChessMove) o;
-        return Objects.equals(startposition, chessMove.startposition) && Objects.equals(endposition, chessMove.endposition) && promotion == chessMove.promotion;
+        return Objects.equals(startposition, chessMove.startposition)
+                && Objects.equals(endposition, chessMove.endposition)
+                && promotion == chessMove.promotion;
     }
 
     @Override

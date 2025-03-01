@@ -1,9 +1,9 @@
 package server;
 
 import com.google.gson.Gson;
-import dataAccess.UserDAO;
-import dataAccess.AuthDAO;
-import dataAccess.DataAccessException;
+import dataaccess.UserDAO;
+import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import model.AuthData;
 import service.UserService;
 import spark.*;

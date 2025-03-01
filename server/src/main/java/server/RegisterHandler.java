@@ -1,9 +1,9 @@
 package server;
 
 import com.google.gson.Gson;
-import dataAccess.DataAccessException;
-import dataAccess.AuthDAO;
-import dataAccess.UserDAO;
+import dataaccess.DataAccessException;
+import dataaccess.AuthDAO;
+import dataaccess.UserDAO;
 import model.AuthData;
 import model.UserData;
 import service.UserService;

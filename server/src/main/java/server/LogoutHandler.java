@@ -2,8 +2,8 @@ package server;
 
 import com.google.gson.Gson;
 import spark.*;
-import dataAccess.DataAccessException;
-import dataAccess.AuthDAO;
+import dataaccess.DataAccessException;
+import dataaccess.AuthDAO;
 import service.UserService;
 
 import java.util.Map;

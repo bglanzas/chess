@@ -2,10 +2,10 @@ package server;
 
 import com.google.gson.Gson;
 import spark.*;
-import dataAccess.DataAccessException;
+import dataaccess.DataAccessException;
 import service.GameService;
-import dataAccess.GameDAO;
-import dataAccess.AuthDAO;
+import dataaccess.GameDAO;
+import dataaccess.AuthDAO;
 import model.GameData;
 
 import java.util.Map;

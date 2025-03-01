@@ -11,18 +11,18 @@ public class PawnMoveCal {
         ChessGame.TeamColor color = board.getPiece(myPosition).getTeamColor();
 
         if(color == ChessGame.TeamColor.BLACK){
-            add_move(board, myPosition, row-1, col, color, moves);
-            diagonal_move(board, myPosition, row-1, col-1, color, moves);
-            diagonal_move(board, myPosition, row-1, col+1, color, moves);
+            addMove(board, myPosition, row-1, col, color, moves);
+            diagonalMove(board, myPosition, row-1, col-1, color, moves);
+            diagonalMove(board, myPosition, row-1, col+1, color, moves);
         }else{
-            add_move(board, myPosition, row+1, col, color, moves);
-            diagonal_move(board, myPosition, row+1, col+1, color, moves);
-            diagonal_move(board, myPosition, row+1, col-1, color, moves);
+            addMove(board, myPosition, row+1, col, color, moves);
+            diagonalMove(board, myPosition, row+1, col+1, color, moves);
+            diagonalMove(board, myPosition, row+1, col-1, color, moves);
         }
 
         return moves;
     }
-    private boolean add_move(ChessBoard board, ChessPosition start, int row, int col, ChessGame.TeamColor color, Collection<ChessMove> moves){
+    private boolean addMove(ChessBoard board, ChessPosition start, int row, int col, ChessGame.TeamColor color, Collection<ChessMove> moves){
         ChessPosition endPosition = new ChessPosition(row, col);
         int endRow = endPosition.getRow();
         if(!inbounds(endPosition)){ return false;}
@@ -51,11 +51,11 @@ public class PawnMoveCal {
             moves.add(new ChessMove(start, endPosition, null));
             return true;
         }else
-            return false;
+            {return false;}
     }
 
 
-    private  boolean diagonal_move(ChessBoard board, ChessPosition start, int row, int col, ChessGame.TeamColor color, Collection<ChessMove> moves){
+    private  boolean diagonalMove(ChessBoard board, ChessPosition start, int row, int col, ChessGame.TeamColor color, Collection<ChessMove> moves){
         ChessPosition endPosition = new ChessPosition(row, col);
         if(!inbounds(endPosition)) {return false;}
         ChessPiece oppPiece = board.getPiece(endPosition);

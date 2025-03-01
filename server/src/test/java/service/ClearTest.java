@@ -1,9 +1,9 @@
 package service;
 
-import dataAccess.GameDAO;
-import dataAccess.UserDAO;
-import dataAccess.AuthDAO;
-import dataAccess.DataAccessException;
+import dataaccess.GameDAO;
+import dataaccess.UserDAO;
+import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.*;
