@@ -37,7 +37,7 @@ public class RegisterTest {
 
     @Test
     @Order(2)
-    public void testRegisterUser_Negative_MissingUsername() {
+    public void testRegisterUser_Negative() {
         assertThrows(DataAccessException.class, () ->
                         userService.register(new UserData("", "password", "email@example.com")), // ✅ FIXED
                 "Registering a user without a username should fail.");
