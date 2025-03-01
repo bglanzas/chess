@@ -26,6 +26,7 @@ public class Server {
         LogoutHandler logoutHandler = new LogoutHandler(authDAO);
         ListGameHandler listGameHandler = new ListGameHandler(gameDAO, authDAO);
         CreateGameHandler createGameHandler = new CreateGameHandler(gameDAO, authDAO);
+        JoinGameHandler joinGameHandler = new JoinGameHandler(gameDAO, authDAO);
 
         Spark.delete("/db", clearHandler.clearDatabase);
         Spark.post("/user", registerHandler.register);
@@ -33,6 +34,7 @@ public class Server {
         Spark.delete("/session", logoutHandler.logout);
         Spark.get("/game", listGameHandler.listGame);
         Spark.post("/game", createGameHandler.createGame);
+        Spark.put("/game", joinGameHandler.joinGame);
 
         Spark.init();
         Spark.awaitInitialization();
