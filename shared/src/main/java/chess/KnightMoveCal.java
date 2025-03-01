@@ -29,7 +29,7 @@ public class KnightMoveCal {
 
     private boolean add_move(ChessBoard board, ChessPosition start, int row, int col, ChessGame.TeamColor color, Collection<ChessMove> moves){
         ChessPosition endPosition = new ChessPosition(row, col);
-        if(!inbounds(endPosition)) return false;
+        if(!inbounds(endPosition)) {return false;}
         ChessPiece piece = board.getPiece(endPosition);
         if(piece == null){
             moves.add(new ChessMove(start, endPosition, null));

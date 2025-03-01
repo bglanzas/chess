@@ -139,6 +139,7 @@ public class ChessGame {
                     }
 
                 }
+
             }
         }
         return false;
@@ -162,12 +163,12 @@ public class ChessGame {
                     Collection<ChessMove> moves = validMoves(position);
                     for(ChessMove move : moves) {
 
-                        ChessPiece cap_Piece = board.getPiece(move.getEndPosition());
+                        ChessPiece cap_piece = board.getPiece(move.getEndPosition());
                         board.movingPiece(position, move.getEndPosition(), piece.getPieceType());
                         boolean stillCheck = isInCheck(teamColor);
 
                         board.movingPiece(move.getEndPosition(), position, piece.getPieceType());
-                        board.addPiece(move.getEndPosition(), cap_Piece);
+                        board.addPiece(move.getEndPosition(), cap_piece);
                         if(!stillCheck) {
                             return false;
                         }
