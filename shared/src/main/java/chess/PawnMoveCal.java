@@ -28,7 +28,7 @@ public class PawnMoveCal {
 
     private void addMove(ChessBoard board, ChessPosition start, int row, int col, ChessGame.TeamColor color, Collection<ChessMove> moves) {
         ChessPosition endPosition = new ChessPosition(row, col);
-        if (!MoveUtils.inbounds(endPosition)) return;
+        if (!MoveUtils.inbounds(endPosition)) {return;}
 
         if (board.getPiece(endPosition) == null) {
             if (PawnUtils.isPromotionRow(row)) {
@@ -41,7 +41,7 @@ public class PawnMoveCal {
 
     private void diagonalMove(ChessBoard board, ChessPosition start, int row, int col, ChessGame.TeamColor color, Collection<ChessMove> moves) {
         ChessPosition endPosition = new ChessPosition(row, col);
-        if (!MoveUtils.inbounds(endPosition)) return;
+        if (!MoveUtils.inbounds(endPosition)) {return;}
 
         ChessPiece oppPiece = board.getPiece(endPosition);
         if (oppPiece != null && oppPiece.getTeamColor() != color) {
