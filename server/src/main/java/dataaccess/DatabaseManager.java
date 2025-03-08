@@ -38,13 +38,54 @@ public class DatabaseManager {
      */
     static void createDatabase() throws DataAccessException {
         try {
-            var statement = "CREATE DATABASE IF NOT EXISTS " + DATABASE_NAME;
+
             var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
+            var statement = "CREATE DATABASE IF NOT EXISTS " + DATABASE_NAME;
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.executeUpdate();
             }
+
+            conn = DriverManager.getConnection(CONNECTION_URL + "/" + DATABASE_NAME, USER, PASSWORD);
+
+            var createUsersTable = """
+            CREATE TABLE IF NOT EXISTS Users (
+                username VARCHAR(50) PRIMARY KEY,
+                password VARCHAR(255) NOT NULL,
+                email VARCHAR(100) NOT NULL
+            )
+        """;
+            try (var stmt = conn.prepareStatement(createUsersTable)) {
+                stmt.executeUpdate();
+            }
+
+            var createGamesTable = """
+            CREATE TABLE IF NOT EXISTS Games (
+                gameID INT AUTO_INCREMENT PRIMARY KEY,
+                whiteUsername VARCHAR(50),
+                blackUsername VARCHAR(50),
+                gameName VARCHAR(100) NOT NULL,
+                gameState JSON,
+                FOREIGN KEY (whiteUsername) REFERENCES Users(username),
+                FOREIGN KEY (blackUsername) REFERENCES Users(username)
+            )
+        """;
+            try (var stmt = conn.prepareStatement(createGamesTable)) {
+                stmt.executeUpdate();
+            }
+
+            var createAuthTable = """
+            CREATE TABLE IF NOT EXISTS AuthTokens (
+                authToken VARCHAR(255) PRIMARY KEY,
+                username VARCHAR(50) NOT NULL,
+                FOREIGN KEY (username) REFERENCES Users(username)
+            )
+        """;
+            try (var stmt = conn.prepareStatement(createAuthTable)) {
+                stmt.executeUpdate();
+            }
+
         } catch (SQLException e) {
-            throw new DataAccessException(e.getMessage());
+            throw new DataAccessException("Error initializing database: " + e.getMessage());
         }
     }
 
@@ -67,6 +108,14 @@ public class DatabaseManager {
             return conn;
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
+        }
+    }
+    public static void main(String[] args) {
+        try {
+            createDatabase();
+            System.out.println("✅ Database and tables created successfully!");
+        } catch (DataAccessException e) {
+            System.err.println("❌ Database creation failed: " + e.getMessage());
         }
     }
 }
