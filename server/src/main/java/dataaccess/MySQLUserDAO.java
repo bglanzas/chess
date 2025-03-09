@@ -5,34 +5,18 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class MySQLUserDAO implements UserDAOInterface {
     @Override
     public void clear() throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
 
-            try (PreparedStatement disableFK = conn.prepareStatement("SET FOREIGN_KEY_CHECKS = 0;")) {
-                disableFK.executeUpdate();
-            }
-
             try (PreparedStatement stmt = conn.prepareStatement("TRUNCATE TABLE Users")) {
                 stmt.executeUpdate();
             }
 
-
-            try (PreparedStatement stmt = conn.prepareStatement("TRUNCATE TABLE AuthTokens")) {
-                stmt.executeUpdate();
-            }
-
-            try (PreparedStatement stmt = conn.prepareStatement("TRUNCATE TABLE Games")) {
-                stmt.executeUpdate();
-            }
-
-            try (PreparedStatement enableFK = conn.prepareStatement("SET FOREIGN_KEY_CHECKS = 1;")) {
-                enableFK.executeUpdate();
-            }
-
         } catch (SQLException e) {
-            throw new DataAccessException("Error clearing database: " + e.getMessage());
+            throw new DataAccessException("Error clearing Users table: " + e.getMessage());
         }
     }
     @Override
