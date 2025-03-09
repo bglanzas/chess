@@ -10,27 +10,23 @@ public class MySQLUserDAO implements UserDAOInterface {
     public void clear() throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
 
-            // Disable foreign key checks to prevent integrity errors
             try (PreparedStatement disableFK = conn.prepareStatement("SET FOREIGN_KEY_CHECKS = 0;")) {
                 disableFK.executeUpdate();
             }
 
-            // Clear Users Table
             try (PreparedStatement stmt = conn.prepareStatement("TRUNCATE TABLE Users")) {
                 stmt.executeUpdate();
             }
 
-            // Clear AuthTokens Table
+
             try (PreparedStatement stmt = conn.prepareStatement("TRUNCATE TABLE AuthTokens")) {
                 stmt.executeUpdate();
             }
 
-            // Clear Games Table (if managed in MySQLUserDAO)
             try (PreparedStatement stmt = conn.prepareStatement("TRUNCATE TABLE Games")) {
                 stmt.executeUpdate();
             }
 
-            // Enable foreign key checks again
             try (PreparedStatement enableFK = conn.prepareStatement("SET FOREIGN_KEY_CHECKS = 1;")) {
                 enableFK.executeUpdate();
             }
