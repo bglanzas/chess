@@ -9,9 +9,6 @@ public class DatabaseManager {
     private static final String PASSWORD;
     private static final String CONNECTION_URL;
 
-    /*
-     * Load the database information for the db.properties file.
-     */
     static {
         try {
             try (var propStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("db.properties")) {
@@ -29,16 +26,12 @@ public class DatabaseManager {
                 CONNECTION_URL = String.format("jdbc:mysql://%s:%d", host, port);
             }
         } catch (Exception ex) {
-            throw new RuntimeException("unable to process db.properties. " + ex.getMessage());
+            throw new RuntimeException("Unable to process db.properties. " + ex.getMessage());
         }
     }
 
-    /**
-     * Creates the database if it does not already exist.
-     */
     static void createDatabase() throws DataAccessException {
         try {
-
             var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
             var statement = "CREATE DATABASE IF NOT EXISTS " + DATABASE_NAME;
             try (var preparedStatement = conn.prepareStatement(statement)) {
@@ -53,7 +46,7 @@ public class DatabaseManager {
                 password VARCHAR(255) NOT NULL,
                 email VARCHAR(100) NOT NULL
             )
-        """;
+            """;
             try (var stmt = conn.prepareStatement(createUsersTable)) {
                 stmt.executeUpdate();
             }
@@ -64,11 +57,11 @@ public class DatabaseManager {
                 whiteUsername VARCHAR(50),
                 blackUsername VARCHAR(50),
                 gameName VARCHAR(100) NOT NULL,
-                gameState JSON,
+                gameState TEXT,
                 FOREIGN KEY (whiteUsername) REFERENCES Users(username),
                 FOREIGN KEY (blackUsername) REFERENCES Users(username)
             )
-        """;
+            """;
             try (var stmt = conn.prepareStatement(createGamesTable)) {
                 stmt.executeUpdate();
             }
@@ -79,37 +72,26 @@ public class DatabaseManager {
                 username VARCHAR(50) NOT NULL,
                 FOREIGN KEY (username) REFERENCES Users(username)
             )
-        """;
+            """;
             try (var stmt = conn.prepareStatement(createAuthTable)) {
                 stmt.executeUpdate();
             }
+
+
 
         } catch (SQLException e) {
             throw new DataAccessException("Error initializing database: " + e.getMessage());
         }
     }
 
-    /**
-     * Create a connection to the database and sets the catalog based upon the
-     * properties specified in db.properties. Connections to the database should
-     * be short-lived, and you must close the connection when you are done with it.
-     * The easiest way to do that is with a try-with-resource block.
-     * <br/>
-     * <code>
-     * try (var conn = DbInfo.getConnection(databaseName)) {
-     * // execute SQL statements.
-     * }
-     * </code>
-     */
     static Connection getConnection() throws DataAccessException {
         try {
-            var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
-            conn.setCatalog(DATABASE_NAME);
-            return conn;
+            return DriverManager.getConnection(CONNECTION_URL + "/" + DATABASE_NAME, USER, PASSWORD);
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
         }
     }
+
     public static void main(String[] args) {
         try {
             createDatabase();
