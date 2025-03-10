@@ -35,6 +35,44 @@ public class MySQLAuthDAO implements AuthDAOInterface{
         }
     }
 
+    @Override
+    public AuthData getAuth(String authToken) throws DataAccessException {
+        String sql = "SELECT * FROM AuthTokens WHERE authToken = ?";
 
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
+            stmt.setString(1, authToken);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new AuthData(
+                            rs.getString("authToken"),
+                            rs.getString("username")
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Error retrieving auth token: " + e.getMessage());
+        }
+        return null;
+    }
+
+    @Override
+    public void deleteAuth(String authToken) throws DataAccessException{
+        String sql = "DELETE FROM AuthTokens WHERE authToken = ?";
+
+        try(Connection conn = DatabaseManager.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)){
+
+            stmt.setString(1, authToken);
+
+            int rowsAffected = stmt.executeUpdate();
+            if(rowsAffected == 0){
+                throw new DataAccessException("Auth token not found");
+            }
+        }catch(SQLException e){
+            throw new DataAccessException("Error deleting auth: "+ e.getMessage());
+        }
+    }
 }

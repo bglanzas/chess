@@ -1,7 +1,7 @@
 package dataaccess;
 
 import model.AuthData;
-import java.util.List;
+
 
 public interface AuthDAOInterface {
     void clear() throws DataAccessException;
