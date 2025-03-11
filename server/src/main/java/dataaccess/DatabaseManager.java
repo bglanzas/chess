@@ -32,8 +32,8 @@ public class DatabaseManager {
 
     public static void createDatabase() throws DataAccessException {
         try (Connection conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD)) {
-            var databaseName = "chessDb" + System.currentTimeMillis();
-            DATABASE_NAME = databaseName;
+
+            DATABASE_NAME = System.getProperty("db.name", "chess");
 
             var statement = "CREATE DATABASE IF NOT EXISTS " + DATABASE_NAME;
             try (var preparedStatement = conn.prepareStatement(statement)) {
@@ -41,7 +41,6 @@ public class DatabaseManager {
             }
 
             conn.setCatalog(DATABASE_NAME);
-
 
             var createUsersTable = """
             CREATE TABLE IF NOT EXISTS Users (
@@ -84,6 +83,7 @@ public class DatabaseManager {
             throw new DataAccessException("Error initializing database: " + e.getMessage());
         }
     }
+
 
     static Connection getConnection() throws DataAccessException {
         try {
