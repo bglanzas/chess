@@ -19,9 +19,7 @@ public class UserService {
     }
 
     public AuthData register(UserData user) throws DataAccessException {
-        if (user.username() == null || user.username().isEmpty() ||
-                user.password() == null || user.password().isEmpty() ||
-                user.email() == null || user.email().isEmpty()) {
+        if (user.username() == null || user.username().isEmpty()) {
             throw new DataAccessException("Bad request");
         }
 
@@ -29,9 +27,7 @@ public class UserService {
             throw new DataAccessException("Username already taken");
         }
 
-        String hashedPassword = BCrypt.hashpw(user.password(), BCrypt.gensalt());
-        UserData hashedUser = new UserData(user.username(), hashedPassword, user.email());
-        userDAO.insertUser(hashedUser);
+        userDAO.insertUser(user);
 
         String authToken = UUID.randomUUID().toString();
         AuthData auth = new AuthData(authToken, user.username());
@@ -39,6 +35,7 @@ public class UserService {
 
         return auth;
     }
+
 
     public AuthData login(String username, String password) throws DataAccessException {
         if (username == null || username.isEmpty() ||

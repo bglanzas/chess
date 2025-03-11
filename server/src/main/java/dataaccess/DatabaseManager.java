@@ -30,15 +30,14 @@ public class DatabaseManager {
         }
     }
 
-    static void createDatabase() throws DataAccessException {
-        try {
-            var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
+    public static void createDatabase() throws DataAccessException {
+        try (Connection conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD)) {
             var statement = "CREATE DATABASE IF NOT EXISTS " + DATABASE_NAME;
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.executeUpdate();
             }
 
-            conn = DriverManager.getConnection(CONNECTION_URL + "/" + DATABASE_NAME, USER, PASSWORD);
+            conn.setCatalog(DATABASE_NAME);  // Ensure we're using the correct database
 
             var createUsersTable = """
             CREATE TABLE IF NOT EXISTS Users (
@@ -46,7 +45,7 @@ public class DatabaseManager {
                 password VARCHAR(255) NOT NULL,
                 email VARCHAR(100) NOT NULL
             )
-            """;
+        """;
             try (var stmt = conn.prepareStatement(createUsersTable)) {
                 stmt.executeUpdate();
             }
@@ -57,11 +56,11 @@ public class DatabaseManager {
                 whiteUsername VARCHAR(50),
                 blackUsername VARCHAR(50),
                 gameName VARCHAR(100) NOT NULL,
-                gameState TEXT,
+                gameState JSON,
                 FOREIGN KEY (whiteUsername) REFERENCES Users(username),
                 FOREIGN KEY (blackUsername) REFERENCES Users(username)
             )
-            """;
+        """;
             try (var stmt = conn.prepareStatement(createGamesTable)) {
                 stmt.executeUpdate();
             }
@@ -72,17 +71,16 @@ public class DatabaseManager {
                 username VARCHAR(50) NOT NULL,
                 FOREIGN KEY (username) REFERENCES Users(username)
             )
-            """;
+        """;
             try (var stmt = conn.prepareStatement(createAuthTable)) {
                 stmt.executeUpdate();
             }
-
-
 
         } catch (SQLException e) {
             throw new DataAccessException("Error initializing database: " + e.getMessage());
         }
     }
+
 
     static Connection getConnection() throws DataAccessException {
         try {

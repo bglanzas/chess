@@ -80,7 +80,6 @@ public class MySQLGameDAO implements GameDAOInterface{
                 if (rs.next()) {
                     String gameStateJson = rs.getString("gameState");
 
-                    // Deserialize the JSON back into a ChessGame object
                     ChessGame gameState = new Gson().fromJson(gameStateJson, ChessGame.class);
 
                     return new GameData(
@@ -98,15 +97,12 @@ public class MySQLGameDAO implements GameDAOInterface{
         }
     }
 
-
-
-    @Override
     public void updateGame(GameData game) throws DataAccessException {
         String sql = """
-            UPDATE Games
-            SET whiteUsername = ?, blackUsername = ?, gameName = ?, gameState = ?
-            WHERE gameID = ?
-            """;
+        UPDATE Games
+        SET whiteUsername = ?, blackUsername = ?, gameName = ?, gameState = ?
+        WHERE gameID = ?
+    """;
 
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -114,21 +110,18 @@ public class MySQLGameDAO implements GameDAOInterface{
             stmt.setString(1, game.whiteUsername());
             stmt.setString(2, game.blackUsername());
             stmt.setString(3, game.gameName());
-
-            String gameStateJson = new Gson().toJson(game.game());
-            stmt.setString(4, gameStateJson);
-
+            stmt.setString(4, new Gson().toJson(game.game()));  // Correct JSON format for ChessGame
             stmt.setInt(5, game.gameID());
 
-            int rowsAffected = stmt.executeUpdate();
-            if (rowsAffected == 0) {
-                throw new DataAccessException("Game not found for update.");
+            if (stmt.executeUpdate() == 0) {
+                throw new DataAccessException("Error updating game: No game found with provided ID.");
             }
 
         } catch (SQLException e) {
             throw new DataAccessException("Error updating game: " + e.getMessage());
         }
     }
+
 
 
     @Override
