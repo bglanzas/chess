@@ -66,40 +66,6 @@ public class MySQLUserDAO implements UserDAOInterface {
     }
 
 
-    @Override
-    public void deleteUser(String username) throws DataAccessException {
-        String sql = "DELETE FROM Users WHERE username = ?";
-        try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, username);
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            throw new DataAccessException("Error deleting user: " + e.getMessage());
-        }
-    }
-
-    @Override
-    public List<UserData> getAllUsers() throws DataAccessException {
-        List<UserData> users = new ArrayList<>();
-        String sql = "SELECT * FROM Users";
-        try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-            while (rs.next()) {
-                users.add(new UserData(
-                        rs.getString("username"),
-                        rs.getString("password"),
-                        rs.getString("email")
-                ));
-            }
-        } catch (SQLException e) {
-            throw new DataAccessException("Error retrieving users: " + e.getMessage());
-        }
-        return users;
-    }
-
-
-
 }
 
 
