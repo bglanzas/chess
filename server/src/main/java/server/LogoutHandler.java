@@ -1,9 +1,9 @@
 package server;
 
 import com.google.gson.Gson;
+import dataaccess.MySQLAuthDAO;
 import spark.*;
 import dataaccess.DataAccessException;
-import dataaccess.AuthDAO;
 import service.UserService;
 
 import java.util.Map;
@@ -12,7 +12,7 @@ public class LogoutHandler {
     private UserService userService;
     private final Gson gson = new Gson();
 
-    public LogoutHandler(AuthDAO authDAO){
+    public LogoutHandler(MySQLAuthDAO authDAO){
         this.userService = new UserService(null, authDAO);
     }
 

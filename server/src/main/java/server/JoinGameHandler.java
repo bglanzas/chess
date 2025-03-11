@@ -1,9 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
-import dataaccess.AuthDAO;
-import dataaccess.DataAccessException;
-import dataaccess.GameDAO;
+import dataaccess.*;
 import service.GameService;
 import spark.*;
 
@@ -13,7 +11,7 @@ public class JoinGameHandler {
     private GameService gameService;
     private final Gson gson = new Gson();
 
-    public JoinGameHandler(GameDAO gameDAO, AuthDAO authDAO){
+    public JoinGameHandler(MySQLGameDAO gameDAO, MySQLAuthDAO authDAO){
         this.gameService = new GameService(gameDAO, authDAO);
     }
 

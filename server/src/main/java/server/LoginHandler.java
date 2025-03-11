@@ -1,9 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
-import dataaccess.UserDAO;
-import dataaccess.AuthDAO;
-import dataaccess.DataAccessException;
+import dataaccess.*;
 import model.AuthData;
 import service.UserService;
 import spark.*;
@@ -15,7 +13,7 @@ public class LoginHandler {
     private UserService userService;
     private final Gson gson = new Gson();
 
-    public LoginHandler(UserDAO userDAO, AuthDAO authDAO){
+    public LoginHandler(MySQLUserDAO userDAO, MySQLAuthDAO authDAO){
         this.userService = new UserService(userDAO, authDAO);
     }
 

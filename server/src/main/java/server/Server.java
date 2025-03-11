@@ -1,8 +1,6 @@
 package server;
 
-import dataaccess.AuthDAO;
-import dataaccess.GameDAO;
-import dataaccess.UserDAO;
+import dataaccess.*;
 import service.ClearService;
 import spark.Spark;
 
@@ -12,9 +10,9 @@ public class Server {
         Spark.staticFiles.location("web");
 
 
-        UserDAO userDAO = new UserDAO();
-        GameDAO gameDAO = new GameDAO();
-        AuthDAO authDAO = new AuthDAO();
+        MySQLUserDAO userDAO = new MySQLUserDAO();
+        MySQLGameDAO gameDAO = new MySQLGameDAO();
+        MySQLAuthDAO authDAO = new MySQLAuthDAO();
 
 
         ClearService clearService = new ClearService(userDAO, gameDAO, authDAO);
@@ -27,6 +25,7 @@ public class Server {
         ListGameHandler listGameHandler = new ListGameHandler(gameDAO, authDAO);
         CreateGameHandler createGameHandler = new CreateGameHandler(gameDAO, authDAO);
         JoinGameHandler joinGameHandler = new JoinGameHandler(gameDAO, authDAO);
+
 
         Spark.delete("/db", clearHandler.clearDatabase);
         Spark.post("/user", registerHandler.register);
@@ -46,3 +45,5 @@ public class Server {
         Spark.awaitStop();
     }
 }
+
+

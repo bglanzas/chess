@@ -1,7 +1,7 @@
 package service;
 
-import dataaccess.UserDAO;
-import dataaccess.AuthDAO;
+import dataaccess.MySQLUserDAO;
+import dataaccess.MySQLAuthDAO;
 import dataaccess.DataAccessException;
 import model.AuthData;
 import model.UserData;
@@ -11,25 +11,24 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class LogoutTest {
-    private static UserDAO userDAO;
-    private static AuthDAO authDAO;
+    private static MySQLUserDAO userDAO;
+    private static MySQLAuthDAO authDAO;
     private static UserService userService;
 
     @BeforeEach
-    public void setUp() {
-        userDAO = new UserDAO();
-        authDAO = new AuthDAO();
+    public void setUp() throws DataAccessException {
+        userDAO = new MySQLUserDAO();
+        authDAO = new MySQLAuthDAO();
         userService = new UserService(userDAO, authDAO);
 
         userDAO.clear();
         authDAO.clear();
     }
 
-
     @Test
     @Order(1)
     public void testLogoutUserPositive() throws DataAccessException {
-        // Register and login user
+
         UserData user = new UserData("testUser", "password", "email@example.com");
         userService.register(user);
         AuthData auth = userService.login("testUser", "password");
@@ -37,10 +36,8 @@ public class LogoutTest {
 
         userService.logout(auth.authToken());
 
-
         assertNull(authDAO.getAuth(auth.authToken()), "Auth token should be removed after logout.");
     }
-
 
     @Test
     @Order(2)
@@ -49,5 +46,5 @@ public class LogoutTest {
                         userService.logout("invalidToken"),
                 "Logging out with an invalid token should fail.");
     }
-
 }
+

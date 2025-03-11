@@ -2,13 +2,12 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
-import dataaccess.AuthDAO;
-import dataaccess.UserDAO;
+import dataaccess.MySQLAuthDAO;
+import dataaccess.MySQLUserDAO;
 import model.AuthData;
 import model.UserData;
 import service.UserService;
 import spark.*;
-
 
 import java.util.Map;
 
@@ -16,8 +15,8 @@ public class RegisterHandler {
     private UserService userService;
     private final Gson gson = new Gson();
 
-    public RegisterHandler(UserDAO userDAO, AuthDAO authDAO) {
-        this.userService = new UserService(userDAO, authDAO);
+    public RegisterHandler(MySQLUserDAO userDAO, MySQLAuthDAO authDAO) {
+        this.userService = new UserService(new MySQLUserDAO(), new MySQLAuthDAO());
     }
 
     public Route register = (Request req, Response res) -> {
@@ -32,3 +31,4 @@ public class RegisterHandler {
         }
     };
 }
+

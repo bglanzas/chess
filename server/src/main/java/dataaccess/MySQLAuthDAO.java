@@ -6,16 +6,26 @@ import java.sql.*;
 public class MySQLAuthDAO implements AuthDAOInterface{
 
     @Override
-    public void clear() throws DataAccessException{
-        String sql = "Truncate Table AuthTokens";
+    public void clear() throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()) {
 
-        try(Connection conn = DatabaseManager.getConnection();
-        PreparedStatement stmt = conn.prepareStatement(sql)){
-            stmt.executeUpdate();
-        }catch (SQLException e){
-            throw new DataAccessException("Error clearing AuthTokens: " + e.getMessage());
+            try (PreparedStatement stmt = conn.prepareStatement("DELETE FROM AuthTokens")) {
+                stmt.executeUpdate();
+            }
+
+            try (PreparedStatement stmt = conn.prepareStatement("DELETE FROM Games")) {
+                stmt.executeUpdate();
+            }
+
+            try (PreparedStatement stmt = conn.prepareStatement("DELETE FROM Users")) {
+                stmt.executeUpdate();
+            }
+
+        } catch (SQLException e) {
+            throw new DataAccessException("Error clearing database: " + e.getMessage());
         }
     }
+
 
     @Override
     public void insertAuth(AuthData auth) throws DataAccessException{
@@ -75,4 +85,6 @@ public class MySQLAuthDAO implements AuthDAOInterface{
             throw new DataAccessException("Error deleting auth: "+ e.getMessage());
         }
     }
+
+
 }

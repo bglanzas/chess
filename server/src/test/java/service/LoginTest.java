@@ -1,7 +1,7 @@
 package service;
 
-import dataaccess.UserDAO;
-import dataaccess.AuthDAO;
+import dataaccess.MySQLUserDAO;
+import dataaccess.MySQLAuthDAO;
 import dataaccess.DataAccessException;
 import model.AuthData;
 import model.UserData;
@@ -11,14 +11,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class LoginTest {
-    private static UserDAO userDAO;
-    private static AuthDAO authDAO;
+    private static MySQLUserDAO userDAO;
+    private static MySQLAuthDAO authDAO;
     private static UserService userService;
 
     @BeforeEach
-    public void setUp() {
-        userDAO = new UserDAO();
-        authDAO = new AuthDAO();
+    public void setUp() throws DataAccessException {
+        userDAO = new MySQLUserDAO();
+        authDAO = new MySQLAuthDAO();
         userService = new UserService(userDAO, authDAO);
 
         userDAO.clear();
@@ -38,7 +38,6 @@ public class LoginTest {
         assertNotNull(auth.authToken(), "AuthData should contain a valid token.");
     }
 
-
     @Test
     @Order(2)
     public void testLoginUserNegative() throws DataAccessException {
@@ -49,6 +48,4 @@ public class LoginTest {
                         userService.login("testUser", "wrongpassword"),
                 "Logging in with the wrong password should fail.");
     }
-
 }
-

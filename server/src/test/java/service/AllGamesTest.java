@@ -1,8 +1,8 @@
 package service;
 
-import dataaccess.UserDAO;
-import dataaccess.AuthDAO;
-import dataaccess.GameDAO;
+import dataaccess.MySQLUserDAO;
+import dataaccess.MySQLAuthDAO;
+import dataaccess.MySQLGameDAO;
 import dataaccess.DataAccessException;
 import model.AuthData;
 import model.GameData;
@@ -15,17 +15,17 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AllGamesTest {
-    private static UserDAO userDAO;
-    private static AuthDAO authDAO;
-    private static GameDAO gameDAO;
+    private static MySQLUserDAO userDAO;
+    private static MySQLAuthDAO authDAO;
+    private static MySQLGameDAO gameDAO;
     private static UserService userService;
     private static GameService gameService;
 
     @BeforeEach
-    public void setUp() {
-        userDAO = new UserDAO();
-        authDAO = new AuthDAO();
-        gameDAO = new GameDAO();
+    public void setUp() throws DataAccessException {
+        userDAO = new MySQLUserDAO();
+        authDAO = new MySQLAuthDAO();
+        gameDAO = new MySQLGameDAO();
         userService = new UserService(userDAO, authDAO);
         gameService = new GameService(gameDAO, authDAO);
 
@@ -37,22 +37,18 @@ public class AllGamesTest {
     @Test
     @Order(1)
     public void testListGamesPositive() throws DataAccessException {
-        // Register and log in user
         UserData user = new UserData("testUser", "password", "email@example.com");
         userService.register(user);
         AuthData auth = userService.login("testUser", "password");
 
-        // Create games
         gameService.createGame(auth.authToken(), "Game1");
         gameService.createGame(auth.authToken(), "Game2");
 
-        // List games
         List<GameData> games = gameService.listGames(auth.authToken());
 
         assertNotNull(games, "List of games should not be null.");
         assertEquals(2, games.size(), "There should be exactly 2 games listed.");
     }
-
 
     @Test
     @Order(2)
@@ -65,27 +61,21 @@ public class AllGamesTest {
     @Test
     @Order(3)
     public void testJoinGamePositive() throws DataAccessException {
-        // Register and log in user
         UserData user = new UserData("player1", "password", "email@example.com");
         userService.register(user);
         AuthData auth = userService.login("player1", "password");
 
-
         GameData game = gameService.createGame(auth.authToken(), "ChessMatch");
 
-
         gameService.joinGame(auth.authToken(), game.gameID(), "WHITE");
-
 
         GameData updatedGame = gameDAO.getGame(game.gameID());
         assertEquals("player1", updatedGame.whiteUsername(), "White player should be set correctly.");
     }
 
-
     @Test
     @Order(4)
     public void testJoinGameNegative() throws DataAccessException {
-        // Register and log in user
         UserData user = new UserData("player3", "password", "email@example.com");
         userService.register(user);
         AuthData auth = userService.login("player3", "password");
@@ -98,19 +88,16 @@ public class AllGamesTest {
     @Test
     @Order(5)
     public void testCreateGamePositive() throws DataAccessException {
-        // Register and log in user
         UserData user = new UserData("testUser", "password", "email@example.com");
         userService.register(user);
         AuthData auth = userService.login("testUser", "password");
 
-        // Create game
         GameData game = gameService.createGame(auth.authToken(), "TestGame");
 
         assertNotNull(game, "Game creation should return a valid GameData.");
         assertEquals("TestGame", game.gameName(), "Game name should match the created game.");
         assertTrue(game.gameID() > 0, "Game ID should be a positive integer.");
     }
-
 
     @Test
     @Order(6)
