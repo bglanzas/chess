@@ -1,6 +1,8 @@
 package server;
 
-import dataaccess.*;
+import dataaccess.MySQLAuthDAO;
+import dataaccess.MySQLGameDAO;
+import dataaccess.MySQLUserDAO;
 import service.ClearService;
 import spark.Spark;
 
@@ -9,19 +11,13 @@ public class Server {
         Spark.port(desiredPort);
         Spark.staticFiles.location("web");
 
-        try {
-            DatabaseManager.createDatabase();
-        } catch (DataAccessException e) {
-            System.err.println("Error creating database: " + e.getMessage());
-            e.printStackTrace();
-            return -1;
-        }
-
         MySQLUserDAO userDAO = new MySQLUserDAO();
         MySQLGameDAO gameDAO = new MySQLGameDAO();
         MySQLAuthDAO authDAO = new MySQLAuthDAO();
 
+
         ClearService clearService = new ClearService(userDAO, gameDAO, authDAO);
+
 
         ClearHandler clearHandler = new ClearHandler(clearService);
         RegisterHandler registerHandler = new RegisterHandler(userDAO, authDAO);
@@ -30,6 +26,7 @@ public class Server {
         ListGameHandler listGameHandler = new ListGameHandler(gameDAO, authDAO);
         CreateGameHandler createGameHandler = new CreateGameHandler(gameDAO, authDAO);
         JoinGameHandler joinGameHandler = new JoinGameHandler(gameDAO, authDAO);
+
 
         Spark.delete("/db", clearHandler.clearDatabase);
         Spark.post("/user", registerHandler.register);
@@ -41,17 +38,12 @@ public class Server {
 
         Spark.init();
         Spark.awaitInitialization();
-
-        System.out.println("Server is running on port: " + Spark.port());
         return Spark.port();
     }
-
 
     public void stop() {
         Spark.stop();
         Spark.awaitStop();
     }
 }
-
-
 
