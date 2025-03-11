@@ -93,12 +93,4 @@ public class DatabaseManager {
         }
     }
 
-    public static void main(String[] args) {
-        try {
-            createDatabase();
-            System.out.println("✅ Database and tables created successfully!");
-        } catch (DataAccessException e) {
-            System.err.println("❌ Database creation failed: " + e.getMessage());
-        }
-    }
 }
