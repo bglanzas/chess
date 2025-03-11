@@ -15,7 +15,7 @@ public class CreateGameHandler {
     private final Gson gson = new Gson();
 
     public CreateGameHandler(MySQLGameDAO gameDAO, MySQLAuthDAO authDAO) {
-        this.gameService = new GameService(new MySQLGameDAO(), new MySQLAuthDAO());
+        this.gameService = new GameService(gameDAO, authDAO);
     }
 
     public Route createGame = (Request req, Response res) -> {
@@ -25,8 +25,10 @@ public class CreateGameHandler {
         try {
             String gameName = (String) json.get("gameName");
             GameData game = gameService.createGame(authToken, gameName);
+
             res.status(200);
             return gson.toJson(Map.of("gameID", game.gameID()));
+
         } catch (DataAccessException e) {
             res.status(e.getMessage().equals("Unauthorized") ? 401 : 400);
             return gson.toJson(Map.of("message", "Error: " + e.getMessage()));
@@ -36,4 +38,5 @@ public class CreateGameHandler {
         }
     };
 }
+
 

@@ -9,16 +9,23 @@ import java.util.List;
 public class MySQLUserDAO implements UserDAOInterface {
     @Override
     public void clear() throws DataAccessException {
-        try (Connection conn = DatabaseManager.getConnection()) {
+        String disableFKChecks = "SET FOREIGN_KEY_CHECKS = 0";
+        String clearUsers = "TRUNCATE TABLE Users";
+        String enableFKChecks = "SET FOREIGN_KEY_CHECKS = 1";
 
-            try (PreparedStatement stmt = conn.prepareStatement("TRUNCATE TABLE Users")) {
-                stmt.executeUpdate();
-            }
+        try (Connection conn = DatabaseManager.getConnection();
+             Statement stmt = conn.createStatement()) {
+
+            stmt.executeUpdate(disableFKChecks);   // 🚨 Disable FK checks
+            stmt.executeUpdate(clearUsers);        // ✅ Clear Users
+            stmt.executeUpdate(enableFKChecks);    // 🔒 Enable FK checks again
 
         } catch (SQLException e) {
             throw new DataAccessException("Error clearing Users table: " + e.getMessage());
         }
     }
+
+
     @Override
     public void insertUser(UserData user) throws DataAccessException {
         String sql = "INSERT INTO Users (username, password, email) VALUES (?, ?, ?)";

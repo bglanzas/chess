@@ -12,37 +12,53 @@ public class MySQLGameDAO implements GameDAOInterface{
     private final Gson gson = new Gson();
 
     @Override
-    public void clear() throws DataAccessException{
-        String sql = "TRUNCATE TABLE Games";
+    public void clear() throws DataAccessException {
+        String disableFKChecks = "SET FOREIGN_KEY_CHECKS = 0";
+        String clearGames = "TRUNCATE TABLE Games";
+        String enableFKChecks = "SET FOREIGN_KEY_CHECKS = 1";
 
-        try(Connection conn = DatabaseManager.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql)){
+        try (Connection conn = DatabaseManager.getConnection();
+             Statement stmt = conn.createStatement()) {
 
-            stmt.executeUpdate();
-        }catch(SQLException e){
-            throw new DataAccessException("Error clearing Games table: "+ e.getMessage());
+            stmt.executeUpdate(disableFKChecks);  // 🚨 Disable FK checks
+            stmt.executeUpdate(clearGames);       // ✅ Clear Games
+            stmt.executeUpdate(enableFKChecks);   // 🔒 Enable FK checks again
+
+        } catch (SQLException e) {
+            throw new DataAccessException("Error clearing Games table: " + e.getMessage());
         }
     }
 
+
+
     @Override
-    public void insertGame(GameData game) throws DataAccessException{
-        String sql = "INSERT INTO Games (gameID, whiteUsername, blackUsername, gameName, game) " +
-                "VALUES (?, ?, ?, ?, ?)";
+    public GameData insertGame(GameData game) throws DataAccessException {
+        String sql = "INSERT INTO Games (whiteUsername, blackUsername, gameName, gameState) VALUES (?, ?, ?, ?)";
 
-        try(Connection conn = DatabaseManager.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql)){
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            stmt.setInt(1, game.gameID());
-            stmt.setString(2, game.whiteUsername());
-            stmt.setString(3, game.blackUsername());
-            stmt.setString(4, game.gameName());
-            stmt.setString(5, gson.toJson(game.game()));
+            stmt.setString(1, game.whiteUsername());
+            stmt.setString(2, game.blackUsername());
+            stmt.setString(3, game.gameName());
+            stmt.setString(4, game.game() != null ? game.game().toString() : null);
 
             stmt.executeUpdate();
-        }catch(SQLException e){
+
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    int gameID = rs.getInt(1);
+                    return new GameData(gameID, game.whiteUsername(), game.blackUsername(), game.gameName(), game.game());
+                } else {
+                    throw new DataAccessException("Failed to retrieve generated game ID.");
+                }
+            }
+
+        } catch (SQLException e) {
             throw new DataAccessException("Error inserting game: " + e.getMessage());
         }
     }
+
 
     @Override
     public GameData getGame(int gameID) throws DataAccessException {
@@ -60,7 +76,7 @@ public class MySQLGameDAO implements GameDAOInterface{
                             rs.getString("whiteUsername"),
                             rs.getString("blackUsername"),
                             rs.getString("gameName"),
-                            gson.fromJson(rs.getString("game"), ChessGame.class)  // Deserialize game
+                            gson.fromJson(rs.getString("gameState"), ChessGame.class)  // Deserialize game
                     );
                 }
             }
@@ -73,7 +89,7 @@ public class MySQLGameDAO implements GameDAOInterface{
 
     @Override
     public void updateGame(GameData game) throws DataAccessException {
-        String sql = "UPDATE Games SET whiteUsername = ?, blackUsername = ?, game = ? WHERE gameID = ?";
+        String sql = "UPDATE Games SET whiteUsername = ?, blackUsername = ?, gameState = ? WHERE gameID = ?";
 
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -95,12 +111,13 @@ public class MySQLGameDAO implements GameDAOInterface{
 
     @Override
     public List<GameData> listGames() throws DataAccessException {
-        List<GameData> games = new ArrayList<>();
         String sql = "SELECT * FROM Games";
 
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
+
+            List<GameData> games = new ArrayList<>();
 
             while (rs.next()) {
                 GameData game = new GameData(
@@ -108,17 +125,19 @@ public class MySQLGameDAO implements GameDAOInterface{
                         rs.getString("whiteUsername"),
                         rs.getString("blackUsername"),
                         rs.getString("gameName"),
-                        gson.fromJson(rs.getString("game"), ChessGame.class)
+                        rs.getString("gameState") != null ?
+                                gson.fromJson(rs.getString("gameState"), ChessGame.class) : null
                 );
                 games.add(game);
             }
 
-        } catch (SQLException e) {
-            throw new DataAccessException("Error listing games: " + e.getMessage());
-        }
+            return games;
 
-        return games;
+        } catch (SQLException e) {
+            throw new DataAccessException("Error retrieving games: " + e.getMessage());
+        }
     }
+
 
 
 }

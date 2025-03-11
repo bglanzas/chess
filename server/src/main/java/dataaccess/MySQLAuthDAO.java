@@ -7,24 +7,23 @@ public class MySQLAuthDAO implements AuthDAOInterface{
 
     @Override
     public void clear() throws DataAccessException {
-        try (Connection conn = DatabaseManager.getConnection()) {
+        String disableFKChecks = "SET FOREIGN_KEY_CHECKS = 0";
+        String clearAuthTokens = "TRUNCATE TABLE AuthTokens";
+        String enableFKChecks = "SET FOREIGN_KEY_CHECKS = 1";
 
-            try (PreparedStatement stmt = conn.prepareStatement("DELETE FROM AuthTokens")) {
-                stmt.executeUpdate();
-            }
+        try (Connection conn = DatabaseManager.getConnection();
+             Statement stmt = conn.createStatement()) {
 
-            try (PreparedStatement stmt = conn.prepareStatement("DELETE FROM Games")) {
-                stmt.executeUpdate();
-            }
-
-            try (PreparedStatement stmt = conn.prepareStatement("DELETE FROM Users")) {
-                stmt.executeUpdate();
-            }
+            stmt.executeUpdate(disableFKChecks);
+            stmt.executeUpdate(clearAuthTokens);
+            stmt.executeUpdate(enableFKChecks);
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error clearing database: " + e.getMessage());
+            throw new DataAccessException("Error clearing AuthTokens table: " + e.getMessage());
         }
     }
+
+
 
 
     @Override
