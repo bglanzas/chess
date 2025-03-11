@@ -24,25 +24,18 @@ public class ListGameHandler {
 
         try {
             List<GameData> games = gameService.listGames(authToken);
-
-            var gamesResponse = games.stream()
-                    .map(game -> Map.of(
-                            "gameID", game.gameID(),
-                            "gameName", game.gameName(),
-                            "whiteUsername", game.whiteUsername(),
-                            "blackUsername", game.blackUsername(),
-                            "gameState", game.game()
-                    )).toList();
-
             res.status(200);
-            return gson.toJson(Map.of("games", gamesResponse));
+            return gson.toJson(Map.of("games", games));
 
         } catch (DataAccessException e) {
+
             res.status(e.getMessage().equals("Unauthorized") ? 401 : 500);
             return gson.toJson(Map.of("message", "Error: " + e.getMessage()));
         } catch (Exception e) {
+
             res.status(500);
             return gson.toJson(Map.of("message", "Error: Internal server error"));
         }
     };
+
 }

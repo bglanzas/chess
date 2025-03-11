@@ -12,9 +12,9 @@ public class ClearService {
     private final MySQLAuthDAO authDAO;
 
     public ClearService(MySQLUserDAO userDAO, MySQLGameDAO gameDAO, MySQLAuthDAO authDAO) {
-        this.userDAO = userDAO;
         this.gameDAO = gameDAO;
         this.authDAO = authDAO;
+        this.userDAO = userDAO;
     }
 
     public void clearDatabase() throws DataAccessException {

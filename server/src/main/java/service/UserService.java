@@ -1,7 +1,7 @@
 package service;
 
-import dataaccess.MySQLUserDAO;
 import dataaccess.MySQLAuthDAO;
+import dataaccess.MySQLUserDAO;
 import dataaccess.DataAccessException;
 import model.AuthData;
 import model.UserData;
@@ -31,7 +31,6 @@ public class UserService {
 
         String hashedPassword = BCrypt.hashpw(user.password(), BCrypt.gensalt());
         UserData hashedUser = new UserData(user.username(), hashedPassword, user.email());
-
         userDAO.insertUser(hashedUser);
 
         String authToken = UUID.randomUUID().toString();
@@ -42,12 +41,12 @@ public class UserService {
     }
 
     public AuthData login(String username, String password) throws DataAccessException {
-        if (username == null || username.isEmpty() || password == null || password.isEmpty()) {
+        if (username == null || username.isEmpty() ||
+                password == null || password.isEmpty()) {
             throw new DataAccessException("Bad request");
         }
 
         UserData user = userDAO.getUser(username);
-
         if (user == null || !BCrypt.checkpw(password, user.password())) {
             throw new DataAccessException("Unauthorized");
         }
@@ -55,6 +54,7 @@ public class UserService {
         String authToken = UUID.randomUUID().toString();
         AuthData auth = new AuthData(authToken, username);
         authDAO.insertAuth(auth);
+
         return auth;
     }
 
@@ -69,4 +69,5 @@ public class UserService {
         authDAO.deleteAuth(authToken);
     }
 }
+
 

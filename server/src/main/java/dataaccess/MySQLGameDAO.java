@@ -13,16 +13,12 @@ public class MySQLGameDAO implements GameDAOInterface{
 
     @Override
     public void clear() throws DataAccessException {
-        String disableFKChecks = "SET FOREIGN_KEY_CHECKS = 0";
-        String clearGames = "TRUNCATE TABLE Games";
-        String enableFKChecks = "SET FOREIGN_KEY_CHECKS = 1";
+        String sql = "DELETE FROM Games";
 
         try (Connection conn = DatabaseManager.getConnection();
-             Statement stmt = conn.createStatement()) {
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.executeUpdate(disableFKChecks);  // 🚨 Disable FK checks
-            stmt.executeUpdate(clearGames);       // ✅ Clear Games
-            stmt.executeUpdate(enableFKChecks);   // 🔒 Enable FK checks again
+            stmt.executeUpdate();
 
         } catch (SQLException e) {
             throw new DataAccessException("Error clearing Games table: " + e.getMessage());
@@ -111,7 +107,7 @@ public class MySQLGameDAO implements GameDAOInterface{
 
     @Override
     public List<GameData> listGames() throws DataAccessException {
-        String sql = "SELECT * FROM Games";
+        String sql = "SELECT gameID, whiteUsername, blackUsername, gameName, gameState FROM Games";
 
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
