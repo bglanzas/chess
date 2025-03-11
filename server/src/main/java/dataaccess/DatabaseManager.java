@@ -4,11 +4,14 @@ import java.sql.*;
 import java.util.Properties;
 
 public class DatabaseManager {
-    private static String DATABASE_NAME;
+    private static final String DATABASE_NAME;
     private static final String USER;
     private static final String PASSWORD;
     private static final String CONNECTION_URL;
 
+    /*
+     * Load the database information for the db.properties file.
+     */
     static {
         try {
             try (var propStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("db.properties")) {
@@ -26,21 +29,23 @@ public class DatabaseManager {
                 CONNECTION_URL = String.format("jdbc:mysql://%s:%d", host, port);
             }
         } catch (Exception ex) {
-            throw new RuntimeException("Unable to process db.properties. " + ex.getMessage());
+            throw new RuntimeException("unable to process db.properties. " + ex.getMessage());
         }
     }
 
+    /**
+     * Creates the database if it does not already exist.
+     */
     public static void createDatabase() throws DataAccessException {
-        try (Connection conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD)) {
+        try {
 
-            DATABASE_NAME = System.getProperty("db.name", "chess");
-
+            var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
             var statement = "CREATE DATABASE IF NOT EXISTS " + DATABASE_NAME;
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.executeUpdate();
             }
 
-            conn.setCatalog(DATABASE_NAME);
+            conn = DriverManager.getConnection(CONNECTION_URL + "/" + DATABASE_NAME, USER, PASSWORD);
 
             var createUsersTable = """
             CREATE TABLE IF NOT EXISTS Users (
@@ -84,10 +89,23 @@ public class DatabaseManager {
         }
     }
 
-
+    /**
+     * Create a connection to the database and sets the catalog based upon the
+     * properties specified in db.properties. Connections to the database should
+     * be short-lived, and you must close the connection when you are done with it.
+     * The easiest way to do that is with a try-with-resource block.
+     * <br/>
+     * <code>
+     * try (var conn = DbInfo.getConnection(databaseName)) {
+     * // execute SQL statements.
+     * }
+     * </code>
+     */
     static Connection getConnection() throws DataAccessException {
         try {
-            return DriverManager.getConnection(CONNECTION_URL + "/" + DATABASE_NAME, USER, PASSWORD);
+            var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
+            conn.setCatalog(DATABASE_NAME);
+            return conn;
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
         }

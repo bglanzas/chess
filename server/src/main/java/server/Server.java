@@ -3,11 +3,21 @@ package server;
 import dataaccess.MySQLAuthDAO;
 import dataaccess.MySQLGameDAO;
 import dataaccess.MySQLUserDAO;
+import dataaccess.DatabaseManager;
+import dataaccess.DataAccessException;
 import service.ClearService;
 import spark.Spark;
 
 public class Server {
     public int run(int desiredPort) {
+        try {
+            DatabaseManager.createDatabase(); // Ensures database and tables are created
+            System.out.println("✅ Database initialized successfully.");
+        } catch (DataAccessException e) {
+            System.err.println("❌ Database initialization failed: " + e.getMessage());
+            return -1; // Exit early if database creation fails
+        }
+
         Spark.port(desiredPort);
         Spark.staticFiles.location("web");
 
@@ -15,9 +25,7 @@ public class Server {
         MySQLGameDAO gameDAO = new MySQLGameDAO();
         MySQLAuthDAO authDAO = new MySQLAuthDAO();
 
-
         ClearService clearService = new ClearService(userDAO, gameDAO, authDAO);
-
 
         ClearHandler clearHandler = new ClearHandler(clearService);
         RegisterHandler registerHandler = new RegisterHandler(userDAO, authDAO);
@@ -26,7 +34,6 @@ public class Server {
         ListGameHandler listGameHandler = new ListGameHandler(gameDAO, authDAO);
         CreateGameHandler createGameHandler = new CreateGameHandler(gameDAO, authDAO);
         JoinGameHandler joinGameHandler = new JoinGameHandler(gameDAO, authDAO);
-
 
         Spark.delete("/db", clearHandler.clearDatabase);
         Spark.post("/user", registerHandler.register);

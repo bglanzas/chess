@@ -16,7 +16,7 @@ public class RegisterHandler {
     private final Gson gson = new Gson();
 
     public RegisterHandler(MySQLUserDAO userDAO, MySQLAuthDAO authDAO) {
-        this.userService = new UserService(new MySQLUserDAO(), new MySQLAuthDAO());
+        this.userService = new UserService(userDAO, authDAO);
     }
 
     public Route register = (Request req, Response res) -> {
