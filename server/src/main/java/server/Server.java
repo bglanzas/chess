@@ -6,15 +6,16 @@ import spark.Spark;
 
 public class Server {
     public int run(int desiredPort) {
+        Spark.port(desiredPort);
+        Spark.staticFiles.location("web");
+
         try {
             DatabaseManager.createDatabase();
         } catch (DataAccessException e) {
             System.err.println("Error creating database: " + e.getMessage());
+            e.printStackTrace();
             return -1;
         }
-
-        Spark.port(desiredPort);
-        Spark.staticFiles.location("web");
 
         MySQLUserDAO userDAO = new MySQLUserDAO();
         MySQLGameDAO gameDAO = new MySQLGameDAO();
@@ -41,11 +42,6 @@ public class Server {
         Spark.init();
         Spark.awaitInitialization();
         return Spark.port();
-    }
-
-    public void stop() {
-        Spark.stop();
-        Spark.awaitStop();
     }
 }
 
