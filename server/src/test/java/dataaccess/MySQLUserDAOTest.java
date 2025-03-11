@@ -14,7 +14,7 @@ public class MySQLUserDAOTest {
     }
 
     @Test
-    void insertUser_Positive() throws DataAccessException {
+    void insertUserPositive() throws DataAccessException {
         UserData user = new UserData("john_doe", "password123", "john@example.com");
         userDAO.insertUser(user);
 
@@ -24,17 +24,17 @@ public class MySQLUserDAOTest {
     }
 
     @Test
-    void insertUser_Negative_DuplicateUsername() throws DataAccessException {
+    void insertUserNegative() throws DataAccessException {
         UserData user = new UserData("john_doe", "password123", "john@example.com");
         userDAO.insertUser(user);
 
-        // Attempt to insert duplicate
+
         assertThrows(DataAccessException.class, () ->
                 userDAO.insertUser(user), "Inserting duplicate username should fail.");
     }
 
     @Test
-    void getUser_Positive() throws DataAccessException {
+    void getUserPositive() throws DataAccessException {
         UserData user = new UserData("jane_doe", "securepassword", "jane@example.com");
         userDAO.insertUser(user);
 
@@ -44,14 +44,14 @@ public class MySQLUserDAOTest {
     }
 
     @Test
-    void getUser_Negative_NotFound() throws DataAccessException {
+    void getUserNegative() throws DataAccessException {
         UserData retrievedUser = userDAO.getUser("non_existent_user");
         assertNull(retrievedUser, "Non-existent user should return null.");
     }
 
 
     @Test
-    void clear_Positive() throws DataAccessException {
+    void clearPositive() throws DataAccessException {
         userDAO.insertUser(new UserData("testUser", "password", "email@example.com"));
         userDAO.clear();
         assertNull(userDAO.getUser("testUser"), "Database should be empty after clear.");

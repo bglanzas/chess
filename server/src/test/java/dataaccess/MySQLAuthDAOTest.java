@@ -23,7 +23,7 @@ public class MySQLAuthDAOTest {
     }
 
     @Test
-    void clear_positive() throws DataAccessException {
+    void clearPositive() throws DataAccessException {
         AuthData auth1 = new AuthData("token123", "john");
         AuthData auth2 = new AuthData("deltafox", "benson");
 
@@ -40,7 +40,7 @@ public class MySQLAuthDAOTest {
     }
 
     @Test
-    void insertAuth_positive() throws DataAccessException {
+    void insertAuthPositive() throws DataAccessException {
         AuthData auth = new AuthData("validToken", "john");
 
         authDAO.insertAuth(auth);
@@ -51,14 +51,14 @@ public class MySQLAuthDAOTest {
     }
 
     @Test
-    void insertAuth_negative_invalidUser() throws DataAccessException {
+    void insertAuthNegative() throws DataAccessException {
         AuthData auth = new AuthData("invalidToken", "nonExistentUser");
 
         assertThrows(DataAccessException.class, () -> authDAO.insertAuth(auth));
     }
 
     @Test
-    void getAuth_positive() throws DataAccessException {
+    void getAuthPositive() throws DataAccessException {
         AuthData auth = new AuthData("auth999", "john");
 
         authDAO.insertAuth(auth);
@@ -69,13 +69,13 @@ public class MySQLAuthDAOTest {
     }
 
     @Test
-    void getAuth_negative_notFound() throws DataAccessException {
+    void getAuthNegative() throws DataAccessException {
         assertNull(authDAO.getAuth("nonExistentToken"));
     }
 
 
     @Test
-    void deleteAuth_positive() throws DataAccessException {
+    void deleteAuthPositive() throws DataAccessException {
         AuthData auth = new AuthData("deleteMe", "john");
 
         authDAO.insertAuth(auth);
@@ -86,7 +86,7 @@ public class MySQLAuthDAOTest {
     }
 
     @Test
-    void deleteAuth_negative_notFound() throws DataAccessException {
+    void deleteAuthNegative() throws DataAccessException {
         assertDoesNotThrow(() -> authDAO.deleteAuth("missingToken"));
     }
 }
