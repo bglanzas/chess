@@ -41,7 +41,15 @@ public class Server {
 
         Spark.init();
         Spark.awaitInitialization();
+
+        System.out.println("Server is running on port: " + Spark.port());
         return Spark.port();
+    }
+
+
+    public void stop() {
+        Spark.stop();
+        Spark.awaitStop();
     }
 }
 
