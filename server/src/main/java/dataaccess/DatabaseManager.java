@@ -85,8 +85,6 @@ public class DatabaseManager {
         }
     }
 
-
-
     static Connection getConnection() throws DataAccessException {
         try {
             return DriverManager.getConnection(CONNECTION_URL + "/" + DATABASE_NAME, USER, PASSWORD);
