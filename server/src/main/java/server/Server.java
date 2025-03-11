@@ -12,10 +12,10 @@ public class Server {
     public int run(int desiredPort) {
         try {
             DatabaseManager.createDatabase(); // Ensures database and tables are created
-            System.out.println("✅ Database initialized successfully.");
+            System.out.println("Database initialized successfully.");
         } catch (DataAccessException e) {
-            System.err.println("❌ Database initialization failed: " + e.getMessage());
-            return -1; // Exit early if database creation fails
+            System.err.println(" Database initialization failed: " + e.getMessage());
+            return -1;
         }
 
         Spark.port(desiredPort);
