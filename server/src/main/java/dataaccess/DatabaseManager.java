@@ -4,7 +4,7 @@ import java.sql.*;
 import java.util.Properties;
 
 public class DatabaseManager {
-    private static final String DATABASE_NAME;
+    private static String DATABASE_NAME;
     private static final String USER;
     private static final String PASSWORD;
     private static final String CONNECTION_URL;
@@ -32,12 +32,16 @@ public class DatabaseManager {
 
     public static void createDatabase() throws DataAccessException {
         try (Connection conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD)) {
+            var databaseName = "chessDb" + System.currentTimeMillis();
+            DATABASE_NAME = databaseName;
+
             var statement = "CREATE DATABASE IF NOT EXISTS " + DATABASE_NAME;
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.executeUpdate();
             }
 
-            conn.setCatalog(DATABASE_NAME);  // Ensure we're using the correct database
+            conn.setCatalog(DATABASE_NAME);
+
 
             var createUsersTable = """
             CREATE TABLE IF NOT EXISTS Users (
@@ -80,6 +84,7 @@ public class DatabaseManager {
             throw new DataAccessException("Error initializing database: " + e.getMessage());
         }
     }
+
 
 
     static Connection getConnection() throws DataAccessException {
