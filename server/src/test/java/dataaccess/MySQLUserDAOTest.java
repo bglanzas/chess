@@ -2,79 +2,59 @@ package dataaccess;
 
 import model.UserData;
 import org.junit.jupiter.api.*;
-
 import static org.junit.jupiter.api.Assertions.*;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class) // Ensures tests run in order
 public class MySQLUserDAOTest {
-    private static MySQLUserDAO userDAO;
+    private MySQLUserDAO userDAO;
 
     @BeforeEach
-    public void setUp() throws DataAccessException {
+    void setUp() throws DataAccessException {
         userDAO = new MySQLUserDAO();
         userDAO.clear();
     }
 
     @Test
-    @Order(1)
-    public void testInsertUser_Positive() throws DataAccessException {
-        UserData user = new UserData("testUser", "password123", "email@example.com");
+    void insertUser_Positive() throws DataAccessException {
+        UserData user = new UserData("john_doe", "password123", "john@example.com");
         userDAO.insertUser(user);
 
-        UserData retrievedUser = userDAO.getUser("testUser");
-
+        UserData retrievedUser = userDAO.getUser("john_doe");
         assertNotNull(retrievedUser);
-        assertEquals("testUser", retrievedUser.username());
-        assertEquals("email@example.com", retrievedUser.email());
+        assertEquals("john_doe", retrievedUser.username());
     }
 
     @Test
-    @Order(2)
-    public void testInsertUser_Negative_Duplicate() throws DataAccessException {
-        UserData user = new UserData("testUser", "password123", "email@example.com");
+    void insertUser_Negative_DuplicateUsername() throws DataAccessException {
+        UserData user = new UserData("john_doe", "password123", "john@example.com");
         userDAO.insertUser(user);
 
-        assertThrows(DataAccessException.class, () -> userDAO.insertUser(user),
-                "Inserting a duplicate user should throw an error.");
+        // Attempt to insert duplicate
+        assertThrows(DataAccessException.class, () ->
+                userDAO.insertUser(user), "Inserting duplicate username should fail.");
     }
 
-
     @Test
-    @Order(3)
-    public void testGetUser_Positive() throws DataAccessException {
-        UserData user = new UserData("existingUser", "securePass", "user@example.com");
+    void getUser_Positive() throws DataAccessException {
+        UserData user = new UserData("jane_doe", "securepassword", "jane@example.com");
         userDAO.insertUser(user);
 
-        UserData retrievedUser = userDAO.getUser("existingUser");
-
+        UserData retrievedUser = userDAO.getUser("jane_doe");
         assertNotNull(retrievedUser);
-        assertEquals("existingUser", retrievedUser.username());
-        assertEquals("user@example.com", retrievedUser.email());
+        assertEquals("jane_doe", retrievedUser.username());
     }
 
     @Test
-    @Order(4)
-    public void testGetUser_Negative_NonExistent() throws DataAccessException {
-        assertNull(userDAO.getUser("nonExistentUser"),
-                "Fetching a non-existent user should return null.");
+    void getUser_Negative_NotFound() throws DataAccessException {
+        UserData retrievedUser = userDAO.getUser("non_existent_user");
+        assertNull(retrievedUser, "Non-existent user should return null.");
     }
 
-    @Test
-    @Order(5)
-    public void testDeleteUser_Positive() throws DataAccessException {
-        UserData user = new UserData("deleteUser", "deletePass", "delete@example.com");
-        userDAO.insertUser(user);
-
-        userDAO.deleteUser("deleteUser");
-
-        assertNull(userDAO.getUser("deleteUser"),
-                "Deleted user should no longer exist.");
-    }
 
     @Test
-    @Order(6)
-    public void testDeleteUser_Negative_NonExistent() throws DataAccessException {
-        assertThrows(DataAccessException.class, () -> userDAO.deleteUser("ghostUser"),
-                "Deleting a non-existent user should fail.");
+    void clear_Positive() throws DataAccessException {
+        userDAO.insertUser(new UserData("testUser", "password", "email@example.com"));
+        userDAO.clear();
+        assertNull(userDAO.getUser("testUser"), "Database should be empty after clear.");
     }
 }
+

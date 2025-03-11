@@ -65,19 +65,6 @@ public class MySQLUserDAO implements UserDAOInterface {
         return null;
     }
 
-    @Override
-    public void updateUser(UserData user) throws DataAccessException {
-        String sql = "UPDATE Users SET password = ?, email = ? WHERE username = ?";
-        try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, user.password());
-            stmt.setString(2, user.email());
-            stmt.setString(3, user.username());
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            throw new DataAccessException("Error updating user: " + e.getMessage());
-        }
-    }
 
     @Override
     public void deleteUser(String username) throws DataAccessException {
