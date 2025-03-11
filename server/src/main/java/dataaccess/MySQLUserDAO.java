@@ -7,20 +7,16 @@ import java.sql.*;
 public class MySQLUserDAO implements UserDAOInterface {
     @Override
     public void clear() throws DataAccessException {
-        String disableFKChecks = "SET FOREIGN_KEY_CHECKS = 0";
         String clearAuthTokens = "DELETE FROM AuthTokens";
         String clearGames = "DELETE FROM Games";
         String clearUsers = "DELETE FROM Users";
-        String enableFKChecks = "SET FOREIGN_KEY_CHECKS = 1";
 
         try (Connection conn = DatabaseManager.getConnection();
              Statement stmt = conn.createStatement()) {
-
-            stmt.executeUpdate(disableFKChecks);
             stmt.executeUpdate(clearAuthTokens);
             stmt.executeUpdate(clearGames);
             stmt.executeUpdate(clearUsers);
-            stmt.executeUpdate(enableFKChecks);
+
 
         } catch (SQLException e) {
             throw new DataAccessException("Error clearing Users table: " + e.getMessage());
