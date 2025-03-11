@@ -11,7 +11,7 @@ import spark.Spark;
 public class Server {
     public int run(int desiredPort) {
         try {
-            DatabaseManager.createDatabase(); // Ensures database and tables are created
+            DatabaseManager.createDatabase();
             System.out.println("Database initialized successfully.");
         } catch (DataAccessException e) {
             System.err.println(" Database initialization failed: " + e.getMessage());
