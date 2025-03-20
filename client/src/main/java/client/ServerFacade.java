@@ -1,26 +1,22 @@
 package client;
 
+import com.google.gson.Gson;
+import model.AuthData;
+import model.GameData;
+import model.UserData;
+
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
 public class ServerFacade {
     private final String serverUrl;
+    private final Gson gson = new Gson();
 
-    public ServerFacade(int port) {
+    public ServerFacade(int port){
         this.serverUrl = "http://localhost:" + port;
-    }
-
-    public void clearDatabase() throws Exception {
-        URL url = new URL(serverUrl + "/clearDatabase");
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-        connection.setRequestMethod("POST");
-        connection.setRequestProperty("Content-Type", "application/json");
-        connection.setDoOutput(true);
-
-        if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-            throw new Exception("Failed to clear database: " + connection.getResponseMessage());
-        }
     }
 }
 
