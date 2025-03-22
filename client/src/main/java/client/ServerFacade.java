@@ -46,38 +46,70 @@ public class ServerFacade {
         }
     }
 
-    public AuthData register(String username, String password, String email)throws Exception{
+    public AuthData register(String username, String password, String email) throws Exception {
         String json = gson.toJson(new UserData(username, password, email));
         String response = sendRequest("/user", "POST", json, null);
+
+        if (response.contains("Error")) {
+            throw new Exception("Registration failed: " + response);
+        }
+
         return gson.fromJson(response, AuthData.class);
     }
 
-    public AuthData login(String username, String password)throws Exception{
+
+    public AuthData login(String username, String password) throws Exception {
         String json = gson.toJson(new UserData(username, password, null));
         String response = sendRequest("/session", "POST", json, null);
+
+        if (response.contains("Error")) {
+            throw new Exception("Login failed: " + response);
+        }
+
         return gson.fromJson(response, AuthData.class);
     }
+
 
     public void logout(String authToken) throws Exception{
         sendRequest("/session", "DELETE", null, authToken);
     }
 
-    public List<GameData> listGames(String authToken)throws Exception{
+    public List<GameData> listGames(String authToken) throws Exception {
         String response = sendRequest("/game", "GET", null, authToken);
+        if (response.contains("Error")) {
+            throw new Exception("Unauthorized");
+        }
+
         Map<String, List<GameData>> gameMap = gson.fromJson(response, Map.class);
         return gameMap.get("games");
     }
 
-    public GameData create(String authToken, String gameName)throws Exception{
+
+    public GameData createGame(String authToken, String gameName) throws Exception {
         String json = gson.toJson(Map.of("gameName", gameName));
         String response = sendRequest("/game", "POST", json, authToken);
-        return gson.fromJson(response, GameData.class);
+
+        if (response.contains("Error")) {
+            throw new Exception("Create game failed: " + response);
+        }
+
+        Map<String, Object> responseMap = gson.fromJson(response, Map.class);
+        Integer gameID = ((Double) responseMap.get("gameID")).intValue();
+
+        return new GameData(gameID, null, null, gameName, null);
     }
 
-    public void joinGame(String authToken, int gameID, String playerColor)throws Exception{
+
+
+    public void joinGame(String authToken, int gameID, String playerColor) throws Exception {
         String json = gson.toJson(Map.of("gameID", gameID, "playerColor", playerColor));
-        sendRequest("/game", "PUT", json, authToken);
+        String response = sendRequest("/game", "PUT", json, authToken);
+
+        if (response.contains("Error")) {
+            throw new Exception("Bad request");
+        }
     }
+
 
     public void clearDatabase() throws Exception{
         sendRequest("/db", "DELETE", null, null);
