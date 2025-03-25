@@ -4,8 +4,9 @@ import com.google.gson.Gson;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
-
+import com.google.gson.reflect.TypeToken;
 import java.io.*;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
@@ -76,12 +77,14 @@ public class ServerFacade {
 
     public List<GameData> listGames(String authToken) throws Exception {
         String response = sendRequest("/game", "GET", null, authToken);
+
         if (response.contains("Error")) {
-            throw new Exception("Unauthorized");
+            throw new Exception("Unable to list games: " + response);
         }
 
-        Map<String, List<GameData>> gameMap = gson.fromJson(response, Map.class);
-        return gameMap.get("games");
+        Type responseType = new TypeToken<Map<String, List<GameData>>>(){}.getType();
+        Map<String, List<GameData>> parsed = gson.fromJson(response, responseType);
+        return parsed.get("games");
     }
 
 

@@ -25,6 +25,7 @@ public class ClientUI {
                 handlePreloginCommand(scanner.nextLine().trim().toLowerCase(),scanner);
             }else{
                 System.out.print("postlogin> ");
+                handlePostloginCommand(scanner.nextLine().trim().toLowerCase(), scanner);
             }
         }
         scanner.close();
@@ -64,7 +65,7 @@ public class ClientUI {
                 listGames();
                 break;
             case "play game":
-                System.out.println("(Play game logic coming soon!)");
+                playGame(scanner);
                 break;
             case "observe game":
                 System.out.println("(Observe game logic coming soon!)");
@@ -150,6 +151,20 @@ public class ClientUI {
             serverFacade.createGame(authToken, gameName);
             System.out.println("Game Created successfully: "+ gameName);
         }catch (Exception e){
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    private void playGame(Scanner scanner) {
+        System.out.print("Enter game number to join: ");
+        int gameNumber = Integer.parseInt(scanner.nextLine().trim());
+        System.out.print("Enter team color (WHITE/BLACK): ");
+        String teamColor = scanner.nextLine().trim().toUpperCase();
+
+        try {
+            serverFacade.joinGame(authToken, gameNumber, teamColor);
+            System.out.println("Joined game successfully as " + teamColor);
+        } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
         }
     }
