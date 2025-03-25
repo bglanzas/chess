@@ -1,7 +1,9 @@
 package client;
 
 import model.AuthData;
-
+import java.util.HashMap;
+import java.util.Map;
+import model.GameData;
 import java.util.Scanner;
 
 public class ClientUI {
@@ -9,7 +11,7 @@ public class ClientUI {
     private boolean isRunning = true;
     private boolean isLoggedIn = false;
     private String authToken;
-
+    private final Map<Integer, Integer> gameNumberToID = new HashMap<>();
     public ClientUI(ServerFacade serverFacade){
         this.serverFacade = serverFacade;
     }
@@ -161,27 +163,47 @@ public class ClientUI {
         System.out.print("Enter team color (WHITE/BLACK): ");
         String teamColor = scanner.nextLine().trim().toUpperCase();
 
+        Integer gameID = gameNumberToID.get(gameNumber);
+        if (gameID == null) {
+            System.out.println("Invalid game number. Please list games again.");
+            return;
+        }
+
         try {
-            serverFacade.joinGame(authToken, gameNumber, teamColor);
+            serverFacade.joinGame(authToken, gameID, teamColor);
             System.out.println("Joined game successfully as " + teamColor);
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
         }
     }
 
-    private void listGames(){
-        try{
+
+    private void listGames() {
+        try {
             var games = serverFacade.listGames(authToken);
-            if(games.isEmpty()){
-                System.out.println("No games Found");
-            }else{
+            gameNumberToID.clear();
+
+            if (games.isEmpty()) {
+                System.out.println("No games found.");
+            } else {
                 System.out.println("Games:");
-                for(int i = 0; i < games.size(); i++){
-                    System.out.println((i+1) + ". " + games.get(i).gameName());
+                for (int i = 0; i < games.size(); i++) {
+                    int gameNumber = i + 1;
+                    var game = games.get(i);
+
+                    gameNumberToID.put(gameNumber, game.gameID());
+
+                    System.out.printf("%d. %s (White: %s, Black: %s)%n",
+                            gameNumber,
+                            game.gameName(),
+                            game.whiteUsername() != null ? game.whiteUsername() : "-",
+                            game.blackUsername() != null ? game.blackUsername() : "-"
+                    );
                 }
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
         }
     }
+
 }

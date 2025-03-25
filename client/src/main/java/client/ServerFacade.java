@@ -11,6 +11,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 
 public class ServerFacade {
     private final String serverUrl;
@@ -105,13 +106,22 @@ public class ServerFacade {
 
 
     public void joinGame(String authToken, int gameID, String playerColor) throws Exception {
-        String json = gson.toJson(Map.of("gameID", gameID, "playerColor", playerColor));
-        String response = sendRequest("/game", "PUT", json, authToken);
+        var request = Map.of(
+                "gameID", gameID,
+                "playerColor", playerColor.toUpperCase()
+        );
 
+        String json = gson.toJson(request);
+        String response = sendRequest("/game", "PUT", json, authToken);
+        System.out.println("Sending join request: " + json);
         if (response.contains("Error")) {
-            throw new Exception("Bad request");
+            throw new Exception("Join game failed: " + response);
         }
     }
+
+
+
+
 
 
     public void clearDatabase() throws Exception{
