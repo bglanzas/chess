@@ -113,5 +113,34 @@ public class ClientUI {
         }
     }
 
+    private void register(Scanner scanner){
+        System.out.print("Enter username: ");
+        String username = scanner.nextLine().trim();
+        System.out.print("Enter password: ");
+        String password = scanner.nextLine().trim();
+        System.out.print("Enter email: ");
+        String email = scanner.nextLine().trim();
+
+        try{
+            AuthData authData = serverFacade.register(username, password, email);
+            this.authToken = authData.authToken();
+            isLoggedIn = true;
+            System.out.println("Registration Successful!");
+        }catch(Exception e){
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    private void logout(){
+        try{
+            serverFacade.logout(authToken);
+            authToken = null;
+            isLoggedIn = false;
+            System.out.println("Logout Successful!");
+        }catch(Exception e){
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
 
 }
