@@ -142,5 +142,31 @@ public class ClientUI {
         }
     }
 
+    private void createGame(Scanner scanner){
+        System.out.print("Enter game name: ");
+        String gameName = scanner.nextLine().trim();
 
+        try{
+            serverFacade.createGame(authToken, gameName);
+            System.out.println("Game Created successfully: "+ gameName);
+        }catch (Exception e){
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    private void listGames(){
+        try{
+            var games = serverFacade.listGames(authToken);
+            if(games.isEmpty()){
+                System.out.println("No games Found");
+            }else{
+                System.out.println("Games:");
+                for(int i = 0; i < games.size(); i++){
+                    System.out.println((i+1) + ". " + games.get(i).gameName());
+                }
+            }
+        }catch(Exception e){
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
 }
