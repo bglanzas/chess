@@ -39,6 +39,10 @@ public class GameService {
         return newGame;
     }
 
+    public GameData getGame(int gameID) throws DataAccessException {
+        return gameDAO.getGame(gameID);
+    }
+
     public void joinGame(String authToken, int gameID, String playerColor) throws DataAccessException {
         AuthData auth = authDAO.getAuth(authToken);
         if (auth == null) {

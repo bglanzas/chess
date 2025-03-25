@@ -4,6 +4,7 @@ import model.AuthData;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import model.GameData;
 
 public class ClientUI {
     private final ServerFacade serverFacade;
@@ -70,7 +71,7 @@ public class ClientUI {
                 playGame(scanner);
                 break;
             case "observe game":
-                System.out.println("(Observe game logic coming soon!)");
+                observeGame(scanner);
                 break;
             default:
                 System.out.println("Unknown command. Type 'help' for available commands.");
@@ -215,6 +216,36 @@ public class ClientUI {
                     );
                 }
             }
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    private void observeGame(Scanner scanner) {
+        if (gameNumberToID.isEmpty()) {
+            System.out.println("Fetching game list...");
+            listGames();
+        }
+
+        System.out.print("Enter game number to observe: ");
+        int gameNumber = Integer.parseInt(scanner.nextLine().trim());
+
+        Integer gameID = gameNumberToID.get(gameNumber);
+        if (gameID == null) {
+            System.out.println("Invalid game number. Please list games again.");
+            return;
+        }
+
+        System.out.print("View from which perspective? (WHITE/BLACK): ");
+        String perspective = scanner.nextLine().trim().toUpperCase();
+        boolean whitePerspective = perspective.equals("WHITE");
+
+        try {
+            GameData game = serverFacade.observeGame(authToken, gameID, whitePerspective);
+            System.out.printf("Now observing game '%s' (%d) from %s's perspective.%n",
+                    game.gameName(), gameID, whitePerspective ? "White" : "Black");
+
+            chessboardDrawer.drawChessboard(whitePerspective);
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
         }

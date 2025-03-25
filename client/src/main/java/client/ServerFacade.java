@@ -127,6 +127,26 @@ public class ServerFacade {
         }
     }
 
+    public GameData observeGame(String authToken, int gameID, boolean whitePerspective) throws Exception {
+        var request = Map.of(
+                "gameID", gameID,
+                "playerColor", "OBSERVER"
+        );
+
+        String json = gson.toJson(request);
+        String response = sendRequest("/game", "PUT", json, authToken);
+
+        if (response.contains("Error")) {
+            throw new Exception("Observe game failed: " + response);
+        }
+
+        return gson.fromJson(response, GameData.class);
+    }
+
+
+
+
+
 
     public void clearDatabase() throws Exception{
         sendRequest("/db", "DELETE", null, null);

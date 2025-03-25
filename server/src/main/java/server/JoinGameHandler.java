@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import dataaccess.*;
 import service.GameService;
 import spark.*;
+import model.GameData;
 
 import java.util.Map;
 
@@ -34,6 +35,11 @@ public class JoinGameHandler {
             String playerColor = (String) json.get("playerColor");
             if (playerColor == null || playerColor.isEmpty()) {
                 throw new DataAccessException("Bad request");
+            }
+            if (playerColor.equalsIgnoreCase("OBSERVER")) {
+                GameData game = gameService.getGame(gameID);
+                res.status(200);
+                return gson.toJson(game);
             }
 
             gameService.joinGame(authToken, gameID, playerColor);
