@@ -111,6 +111,20 @@ public class ServerFacadeTests {
         GameData game = facade.createGame(auth.authToken(), "Join Test Game");
         assertDoesNotThrow(() -> facade.joinGame(auth.authToken(), game.gameID(), "WHITE"));
     }
+
+    @Test
+    public void logoutPositive() throws Exception {
+        AuthData auth = facade.register("user7", "pass7", "email7@example.com");
+        assertDoesNotThrow(() -> facade.logout(auth.authToken()));
+    }
+
+    @Test
+    public void logoutNegative() {
+        Exception e = assertThrows(Exception.class, () -> {
+            facade.logout("invalid-token");
+        });
+        assertNotNull(e.getMessage());
+    }
 }
 
 

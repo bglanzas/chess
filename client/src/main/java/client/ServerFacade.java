@@ -72,8 +72,12 @@ public class ServerFacade {
     }
 
 
-    public void logout(String authToken) throws Exception{
-        sendRequest("/session", "DELETE", null, authToken);
+    public void logout(String authToken) throws Exception {
+        String response = sendRequest("/session", "DELETE", null, authToken);
+
+        if (response != null && response.contains("Error")) {
+            throw new Exception("Logout failed: " + response);
+        }
     }
 
     public List<GameData> listGames(String authToken) throws Exception {

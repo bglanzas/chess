@@ -158,8 +158,14 @@ public class ClientUI {
     }
 
     private void playGame(Scanner scanner) {
+        if (gameNumberToID.isEmpty()) {
+            System.out.println("Fetching game list...");
+            listGames();
+        }
+
         System.out.print("Enter game number to join: ");
         int gameNumber = Integer.parseInt(scanner.nextLine().trim());
+
         System.out.print("Enter team color (WHITE/BLACK): ");
         String teamColor = scanner.nextLine().trim().toUpperCase();
 
@@ -182,6 +188,7 @@ public class ClientUI {
             }
         }
     }
+
 
 
 
