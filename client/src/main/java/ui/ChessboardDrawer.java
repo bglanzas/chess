@@ -2,17 +2,10 @@ package client;
 
 import ui.EscapeSequences;
 
-public class ChessboardDrawer{
+public class ChessboardDrawer {
 
     private static final String LIGHT_SQUARE = EscapeSequences.SET_BG_COLOR_LIGHT_GREY;
     private static final String DARK_SQUARE = EscapeSequences.SET_BG_COLOR_DARK_GREY;
-
-    // Unicode Chess Pieces
-    private static final String[] WHITE_PIECES = {"♖", "♘", "♗", "♕", "♔", "♗", "♘", "♖"};
-    private static final String[] BLACK_PIECES = {"♜", "♞", "♝", "♛", "♚", "♝", "♞", "♜"};
-
-    private static final String WHITE_PAWN = "♙";
-    private static final String BLACK_PAWN = "♟";
 
     public void drawChessboard(boolean isWhitePerspective) {
         System.out.print(EscapeSequences.ERASE_SCREEN);
@@ -25,7 +18,7 @@ public class ChessboardDrawer{
     }
 
     private void drawWhitePerspective() {
-        System.out.println("  a b c d e f g h");
+        System.out.println("   a  b  c  d  e  f  g  h");
         for (int row = 8; row >= 1; row--) {
             System.out.print(row + " ");
             for (int col = 1; col <= 8; col++) {
@@ -33,11 +26,11 @@ public class ChessboardDrawer{
             }
             System.out.println(" " + row);
         }
-        System.out.println("  a b c d e f g h");
+        System.out.println("   a  b  c  d  e  f  g  h");
     }
 
     private void drawBlackPerspective() {
-        System.out.println("  h g f e d c b a");
+        System.out.println("   h  g  f  e  d  c  b  a");
         for (int row = 1; row <= 8; row++) {
             System.out.print(row + " ");
             for (int col = 8; col >= 1; col--) {
@@ -45,25 +38,47 @@ public class ChessboardDrawer{
             }
             System.out.println(" " + row);
         }
-        System.out.println("  h g f e d c b a");
+        System.out.println("   h  g  f  e  d  c  b  a");
     }
 
     private void drawSquare(int row, int col) {
         boolean isLightSquare = (row + col) % 2 == 0;
         String bgColor = isLightSquare ? LIGHT_SQUARE : DARK_SQUARE;
 
-        // Place Chess Pieces
         if (row == 1) {
-            System.out.print(bgColor + WHITE_PIECES[col - 1] + " " + EscapeSequences.RESET_BG_COLOR);
+            System.out.print(bgColor + getInitialWhitePiece(col) + EscapeSequences.RESET_BG_COLOR);
         } else if (row == 2) {
-            System.out.print(bgColor + WHITE_PAWN + " " + EscapeSequences.RESET_BG_COLOR);
+            System.out.print(bgColor + EscapeSequences.WHITE_PAWN + EscapeSequences.RESET_BG_COLOR);
         } else if (row == 7) {
-            System.out.print(bgColor + BLACK_PAWN + " " + EscapeSequences.RESET_BG_COLOR);
+            System.out.print(bgColor + EscapeSequences.BLACK_PAWN + EscapeSequences.RESET_BG_COLOR);
         } else if (row == 8) {
-            System.out.print(bgColor + BLACK_PIECES[col - 1] + " " + EscapeSequences.RESET_BG_COLOR);
+            System.out.print(bgColor + getInitialBlackPiece(col) + EscapeSequences.RESET_BG_COLOR);
         } else {
-            System.out.print(bgColor + "  " + EscapeSequences.RESET_BG_COLOR);
+            System.out.print(bgColor + EscapeSequences.EMPTY + EscapeSequences.RESET_BG_COLOR);
         }
     }
+
+    private String getInitialWhitePiece(int col) {
+        return switch (col) {
+            case 1, 8 -> EscapeSequences.WHITE_ROOK;
+            case 2, 7 -> EscapeSequences.WHITE_KNIGHT;
+            case 3, 6 -> EscapeSequences.WHITE_BISHOP;
+            case 4 -> EscapeSequences.WHITE_QUEEN;
+            case 5 -> EscapeSequences.WHITE_KING;
+            default -> EscapeSequences.EMPTY;
+        };
+    }
+
+    private String getInitialBlackPiece(int col) {
+        return switch (col) {
+            case 1, 8 -> EscapeSequences.BLACK_ROOK;
+            case 2, 7 -> EscapeSequences.BLACK_KNIGHT;
+            case 3, 6 -> EscapeSequences.BLACK_BISHOP;
+            case 4 -> EscapeSequences.BLACK_QUEEN;
+            case 5 -> EscapeSequences.BLACK_KING;
+            default -> EscapeSequences.EMPTY;
+        };
+    }
 }
+
 

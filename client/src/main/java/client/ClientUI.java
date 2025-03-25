@@ -3,7 +3,6 @@ package client;
 import model.AuthData;
 import java.util.HashMap;
 import java.util.Map;
-import model.GameData;
 import java.util.Scanner;
 
 public class ClientUI {
@@ -12,6 +11,7 @@ public class ClientUI {
     private boolean isLoggedIn = false;
     private String authToken;
     private final Map<Integer, Integer> gameNumberToID = new HashMap<>();
+    private final client.ChessboardDrawer chessboardDrawer = new client.ChessboardDrawer();
     public ClientUI(ServerFacade serverFacade){
         this.serverFacade = serverFacade;
     }
@@ -170,12 +170,16 @@ public class ClientUI {
         }
 
         try {
+            System.out.println("Sending join request: {\"playerColor\":\"" + teamColor + "\",\"gameID\":" + gameID + "}");
             serverFacade.joinGame(authToken, gameID, teamColor);
             System.out.println("Joined game successfully as " + teamColor);
+            boolean isWhite = teamColor.equalsIgnoreCase("WHITE");
+            chessboardDrawer.drawChessboard(isWhite);
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
         }
     }
+
 
 
     private void listGames() {
