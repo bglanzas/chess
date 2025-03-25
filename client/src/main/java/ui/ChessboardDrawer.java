@@ -43,7 +43,7 @@ public class ChessboardDrawer {
 
     private void drawSquare(int row, int col) {
         boolean isLightSquare = (row + col) % 2 == 0;
-        String bgColor = isLightSquare ? LIGHT_SQUARE : DARK_SQUARE;
+        String bgColor = isLightSquare ? DARK_SQUARE : LIGHT_SQUARE;
 
         if (row == 1) {
             System.out.print(bgColor + getInitialWhitePiece(col) + EscapeSequences.RESET_BG_COLOR);
