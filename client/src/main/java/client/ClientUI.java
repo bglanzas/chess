@@ -1,5 +1,7 @@
 package client;
 
+import model.AuthData;
+
 import java.util.Scanner;
 
 public class ClientUI {
@@ -89,4 +91,27 @@ public class ClientUI {
         System.out.println(" play game");
         System.out.println(" observe game");
     }
+
+    private void quit(){
+        System.out.println("Exiting Chess! Bye!");
+        isRunning = false;
+    }
+
+    private void login(Scanner scanner){
+        System.out.print("Enter username: ");
+        String username = scanner.nextLine().trim();
+        System.out.print("Enter password: ");
+        String password = scanner.nextLine().trim();
+
+        try{
+            AuthData authData = serverFacade.login(username, password);
+            this.authToken = authData.authToken();
+            isLoggedIn = true;
+            System.out.println("Login successful!");
+        }catch (Exception e){
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+
 }
