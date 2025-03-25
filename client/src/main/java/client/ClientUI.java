@@ -23,10 +23,10 @@ public class ClientUI {
 
         while(isRunning){
             if(!isLoggedIn){
-                System.out.print("prelogin> ");
+                System.out.print("> ");
                 handlePreloginCommand(scanner.nextLine().trim().toLowerCase(),scanner);
             }else{
-                System.out.print("postlogin> ");
+                System.out.print("> ");
                 handlePostloginCommand(scanner.nextLine().trim().toLowerCase(), scanner);
             }
         }
@@ -66,7 +66,7 @@ public class ClientUI {
             case "list games":
                 listGames();
                 break;
-            case "play game":
+            case "join game":
                 playGame(scanner);
                 break;
             case "observe game":
@@ -91,7 +91,7 @@ public class ClientUI {
         System.out.println(" logout");
         System.out.println(" create game");
         System.out.println(" list games");
-        System.out.println(" play game");
+        System.out.println(" join game");
         System.out.println(" observe game");
     }
 
@@ -170,7 +170,6 @@ public class ClientUI {
         }
 
         try {
-            System.out.println("Sending join request: {\"playerColor\":\"" + teamColor + "\",\"gameID\":" + gameID + "}");
             serverFacade.joinGame(authToken, gameID, teamColor);
             System.out.println("Joined game successfully as " + teamColor);
             boolean isWhite = teamColor.equalsIgnoreCase("WHITE");
