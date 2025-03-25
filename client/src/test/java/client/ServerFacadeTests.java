@@ -41,7 +41,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void registerNegative_duplicateUser() throws Exception {
+    public void registerNegative() throws Exception {
         facade.register("user1", "pass1", "email1@example.com");
         Exception e = assertThrows(Exception.class, () -> {
             facade.register("user1", "pass1", "email1@example.com");
@@ -58,7 +58,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void loginNegative_invalidCredentials() {
+    public void loginNegative() {
         Exception e = assertThrows(Exception.class, () -> {
             facade.login("fakeuser", "fakepass");
         });
@@ -73,7 +73,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void createGameNegative_invalidToken() {
+    public void createGameNegative() {
         Exception e = assertThrows(Exception.class, () -> {
             facade.createGame("bad-token", "Should Fail");
         });
@@ -89,7 +89,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void listGamesNegative_invalidToken() {
+    public void listGamesNegative() {
         Exception e = assertThrows(Exception.class, () -> {
             facade.listGames("bad-token");
         });
@@ -97,7 +97,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void joinGameNegative_invalidGameID() throws Exception {
+    public void joinGameNegative() throws Exception {
         AuthData auth = facade.register("user5", "pass5", "email5@example.com");
         Exception e = assertThrows(Exception.class, () -> {
             facade.joinGame(auth.authToken(), 99999, "WHITE");

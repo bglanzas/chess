@@ -1,20 +1,10 @@
-import server.Server;
-import client.ClientUI;
-import client.ServerFacade;
+package client;
 
 public class Main {
     public static void main(String[] args) {
-        // Start the server
-        Server server = new Server();
-        int port = server.run(8080);
-        System.out.println("Server started on port " + port);
+        int port = 8080; // Use the same port your server is running on
         ServerFacade serverFacade = new ServerFacade(port);
         ClientUI clientUI = new ClientUI(serverFacade);
-
-
         clientUI.start();
-
-        server.stop();
     }
 }
-
