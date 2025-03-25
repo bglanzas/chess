@@ -175,7 +175,11 @@ public class ClientUI {
             boolean isWhite = teamColor.equalsIgnoreCase("WHITE");
             chessboardDrawer.drawChessboard(isWhite);
         } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
+            if (e.getMessage().contains("Game is full")) {
+                System.out.println("Error: Game is full. That color may already be taken.");
+            } else {
+                System.out.println("Error: " + e.getMessage());
+            }
         }
     }
 

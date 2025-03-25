@@ -113,11 +113,16 @@ public class ServerFacade {
 
         String json = gson.toJson(request);
         String response = sendRequest("/game", "PUT", json, authToken);
-        System.out.println("Sending join request: " + json);
+
         if (response.contains("Error")) {
-            throw new Exception("Join game failed: " + response);
+            if (response.toLowerCase().contains("already taken")) {
+                throw new Exception("Game is full.");
+            } else {
+                throw new Exception("Join game failed: " + response);
+            }
         }
     }
+
 
     public void clearDatabase() throws Exception{
         sendRequest("/db", "DELETE", null, null);
