@@ -46,4 +46,47 @@ public class ClientUI {
                 System.out.println("Unknown command. Type 'help' for available commands.");
         }
     }
+
+    private void handlePostloginCommand(String input, Scanner scanner) {
+        switch (input) {
+            case "help":
+                displayPostloginHelp();
+                break;
+            case "logout":
+                logout();
+                break;
+            case "create game":
+                createGame(scanner);
+                break;
+            case "list games":
+                listGames();
+                break;
+            case "play game":
+                System.out.println("(Play game logic coming soon!)");
+                break;
+            case "observe game":
+                System.out.println("(Observe game logic coming soon!)");
+                break;
+            default:
+                System.out.println("Unknown command. Type 'help' for available commands.");
+        }
+    }
+
+    private void  displayPreloginHelp(){
+        System.out.println("Available commands:");
+        System.out.println(" help");
+        System.out.println(" quit");
+        System.out.println(" login");
+        System.out.println(" register");
+    }
+
+    private void displayPostloginHelp(){
+        System.out.println("Available commands:");
+        System.out.println(" help");
+        System.out.println(" logout");
+        System.out.println(" create game");
+        System.out.println(" list games");
+        System.out.println(" play game");
+        System.out.println(" observe game");
+    }
 }
