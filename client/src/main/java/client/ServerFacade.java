@@ -119,11 +119,6 @@ public class ServerFacade {
         }
     }
 
-
-
-
-
-
     public void clearDatabase() throws Exception{
         sendRequest("/db", "DELETE", null, null);
     }
