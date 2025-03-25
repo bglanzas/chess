@@ -43,7 +43,9 @@ public class ServerFacade {
         } catch (IOException e) {
             try (InputStreamReader errorReader = new InputStreamReader(connection.getErrorStream());
                  BufferedReader br = new BufferedReader(errorReader)) {
-                return br.readLine();
+                String raw = br.readLine();
+                Map<String, String> errorMap = gson.fromJson(raw, Map.class);
+                return errorMap.getOrDefault("message", "Unknown error");
             }
         }
     }

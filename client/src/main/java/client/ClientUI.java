@@ -113,7 +113,8 @@ public class ClientUI {
             isLoggedIn = true;
             System.out.println("Login successful!");
         }catch (Exception e){
-            System.out.println("Error: " + e.getMessage());
+            String msg = e.getMessage().replace("Error: ", "").trim();
+            System.out.println("Error: " + msg);
         }
     }
 
@@ -131,7 +132,8 @@ public class ClientUI {
             isLoggedIn = true;
             System.out.println("Registration Successful!");
         }catch(Exception e){
-            System.out.println("Error: " + e.getMessage());
+            String msg = e.getMessage().replace("Error: ", "").trim();
+            System.out.println("Error: " + msg);
         }
     }
 
@@ -142,7 +144,8 @@ public class ClientUI {
             isLoggedIn = false;
             System.out.println("Logout Successful!");
         }catch(Exception e){
-            System.out.println("Error: " + e.getMessage());
+            String msg = e.getMessage().replace("Error: ", "").trim();
+            System.out.println("Error: " + msg);
         }
     }
 
@@ -154,7 +157,8 @@ public class ClientUI {
             serverFacade.createGame(authToken, gameName);
             System.out.println("Game Created successfully: "+ gameName);
         }catch (Exception e){
-            System.out.println("Error: " + e.getMessage());
+            String msg = e.getMessage().replace("Error: ", "").trim();
+            System.out.println("Error: " + msg);
         }
     }
 
@@ -165,7 +169,13 @@ public class ClientUI {
         }
 
         System.out.print("Enter game number to join: ");
-        int gameNumber = Integer.parseInt(scanner.nextLine().trim());
+        int gameNumber;
+        try {
+            gameNumber = Integer.parseInt(scanner.nextLine().trim());
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter a valid game number.");
+            return;
+        }
 
         System.out.print("Enter team color (WHITE/BLACK): ");
         String teamColor = scanner.nextLine().trim().toUpperCase();
@@ -185,7 +195,8 @@ public class ClientUI {
             if (e.getMessage().contains("Game is full")) {
                 System.out.println("Error: Game is full. That color may already be taken.");
             } else {
-                System.out.println("Error: " + e.getMessage());
+                String msg = e.getMessage().replace("Error: ", "").trim();
+                System.out.println("Error: " + msg);
             }
         }
     }
@@ -217,7 +228,8 @@ public class ClientUI {
                 }
             }
         } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
+            String msg = e.getMessage().replace("Error: ", "").trim();
+            System.out.println("Error: " + msg);
         }
     }
 
@@ -228,8 +240,13 @@ public class ClientUI {
         }
 
         System.out.print("Enter game number to observe: ");
-        int gameNumber = Integer.parseInt(scanner.nextLine().trim());
-
+        int gameNumber;
+        try {
+            gameNumber = Integer.parseInt(scanner.nextLine().trim());
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter a valid game number.");
+            return;
+        }
         Integer gameID = gameNumberToID.get(gameNumber);
         if (gameID == null) {
             System.out.println("Invalid game number. Please list games again.");
@@ -247,7 +264,8 @@ public class ClientUI {
 
             chessboardDrawer.drawChessboard(whitePerspective);
         } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
+            String msg = e.getMessage().replace("Error: ", "").trim();
+            System.out.println("Error: " + msg);
         }
     }
 
