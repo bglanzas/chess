@@ -6,6 +6,7 @@ import dataaccess.MySQLUserDAO;
 import dataaccess.DatabaseManager;
 import dataaccess.DataAccessException;
 import service.ClearService;
+import websocket.GameWebSocketHandler;
 import spark.Spark;
 
 public class Server {
@@ -42,7 +43,7 @@ public class Server {
         Spark.get("/game", listGameHandler.listGame);
         Spark.post("/game", createGameHandler.createGame);
         Spark.put("/game", joinGameHandler.joinGame);
-
+        Spark.webSocket("/ws", GameWebSocketHandler.class);
         Spark.init();
         Spark.awaitInitialization();
         return Spark.port();
