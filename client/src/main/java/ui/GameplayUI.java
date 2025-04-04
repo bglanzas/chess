@@ -4,18 +4,18 @@ import chess.ChessMove;
 import chess.ChessGame;
 import chess.ChessPosition;
 import websocket.commands.UserGameCommand;
-import websocket.commands.UserMoveCommand;       // if you have this
+import websocket.commands.UserMoveCommand;
 import websocket.messages.ServerMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ErrorMessage;
-import client.websocket.WebSocketClient;
+import client.websocket.GameSocketClient;
 
 import java.net.http.WebSocket;
 import java.util.Scanner;
 
 public class GameplayUI {
-    private final WebSocketClient wsClient;
+    private final GameSocketClient wsClient;
     private final String authToken;
     private final int gameID;
     private ChessGame game;
