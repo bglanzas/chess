@@ -11,26 +11,29 @@ import websocket.messages.NotificationMessage;
 import websocket.messages.ErrorMessage;
 import client.websocket.GameSocketClient;
 
-import java.net.http.WebSocket;
 import java.util.Scanner;
 
 public class GameplayUI {
-    private final GameSocketClient wsClient;
+    private GameSocketClient wsClient;
     private final String authToken;
     private final int gameID;
     private ChessGame game;
 
-    public GameplayUI(WebSocket wsClient, String authToken, int gameID){
+    public GameplayUI(GameSocketClient wsClient, String authToken, int gameID){
         this.wsClient = wsClient;
         this.authToken = authToken;
         this.gameID = gameID;
+    }
+
+    public void setSocketClient(GameSocketClient client) {
+        this.wsClient = client;
     }
 
     public void start(){
         wsClient.connect();
         wsClient.send(new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID));
 
-        System.out.println("\n\u001B[1mEntered Gameplay! Type 'help' to see available commands.\\u001B[0m");
+        System.out.println("\n\u001B[1mEntered Gameplay! Type 'help' to see available commands.\u001B[0m");
         Scanner scanner = new Scanner(System.in);
 
         while(true){
@@ -43,7 +46,7 @@ public class GameplayUI {
                 case "highlight" -> highlightMoves(scanner);
                 case "leave" -> {
                     wsClient.send(new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID));
-                    return;;
+                    return;
                 }
                 case "resign" -> {
                     System.out.println("Are you sure you want to resign? (y/n): ");
@@ -129,3 +132,5 @@ public class GameplayUI {
         }
     }
 }
+
+
