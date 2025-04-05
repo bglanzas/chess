@@ -9,7 +9,7 @@ import websocket.messages.ServerMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ErrorMessage;
-import client.websocket.GameSocketClient;
+import websocket.GameSocketClient;
 
 import java.util.Scanner;
 

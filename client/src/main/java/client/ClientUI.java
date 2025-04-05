@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 import model.GameData;
+import ui.GameplayUI;
+import websocket.GameSocketClient;
 
 public class ClientUI {
     private final ServerFacade serverFacade;
@@ -67,7 +69,7 @@ public class ClientUI {
             case "list games":
                 listGames();
                 break;
-            case "join game":
+            case "play game":
                 playGame(scanner);
                 break;
             case "observe game":
@@ -163,43 +165,34 @@ public class ClientUI {
     }
 
     private void playGame(Scanner scanner) {
-        if (gameNumberToID.isEmpty()) {
-            System.out.println("Fetching game list...");
-            listGames();
-        }
-
+        listGames();
         System.out.print("Enter game number to join: ");
-        int gameNumber;
-        try {
-            gameNumber = Integer.parseInt(scanner.nextLine().trim());
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid input. Please enter a valid game number.");
-            return;
-        }
-
-        System.out.print("Enter team color (WHITE/BLACK): ");
-        String teamColor = scanner.nextLine().trim().toUpperCase();
-
+        int gameNumber = Integer.parseInt(scanner.nextLine());
         Integer gameID = gameNumberToID.get(gameNumber);
+
         if (gameID == null) {
-            System.out.println("Invalid game number. Please list games again.");
+            System.out.println("Invalid game number.");
             return;
         }
+
+        System.out.print("Enter team color to play as (WHITE/BLACK): ");
+        String teamColor = scanner.nextLine().trim().toUpperCase();
 
         try {
             serverFacade.joinGame(authToken, gameID, teamColor);
             System.out.println("Joined game successfully as " + teamColor);
-            boolean isWhite = teamColor.equalsIgnoreCase("WHITE");
-            chessboardDrawer.drawChessboard(isWhite);
+
+            String uri = "ws://localhost:8080/ws";
+            var gameplayUI = new GameplayUI(null, authToken, gameID);
+            var wsClient = new GameSocketClient(uri, gameplayUI);
+            gameplayUI.setSocketClient(wsClient);
+            gameplayUI.start();
         } catch (Exception e) {
-            if (e.getMessage().contains("Game is full")) {
-                System.out.println("Error: Game is full. That color may already be taken.");
-            } else {
-                String msg = e.getMessage().replace("Error: ", "").trim();
-                System.out.println("Error: " + msg);
-            }
+            String msg = e.getMessage().replace("Error: ", "").trim();
+            System.out.println("Error: " + msg);
         }
     }
+
 
 
 

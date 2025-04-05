@@ -11,16 +11,17 @@ import spark.Spark;
 
 public class Server {
     public int run(int desiredPort) {
+        Spark.port(desiredPort);
+        Spark.webSocket("/ws", GameWebSocketHandler.class);
+        Spark.staticFiles.location("web");
+
         try {
             DatabaseManager.createDatabase();
             System.out.println("Database initialized successfully.");
         } catch (DataAccessException e) {
-            System.err.println(" Database initialization failed: " + e.getMessage());
+            System.err.println("Database initialization failed: " + e.getMessage());
             return -1;
         }
-
-        Spark.port(desiredPort);
-        Spark.staticFiles.location("web");
 
         MySQLUserDAO userDAO = new MySQLUserDAO();
         MySQLGameDAO gameDAO = new MySQLGameDAO();
@@ -43,7 +44,7 @@ public class Server {
         Spark.get("/game", listGameHandler.listGame);
         Spark.post("/game", createGameHandler.createGame);
         Spark.put("/game", joinGameHandler.joinGame);
-        Spark.webSocket("/ws", GameWebSocketHandler.class);
+
         Spark.init();
         Spark.awaitInitialization();
         return Spark.port();
@@ -54,4 +55,5 @@ public class Server {
         Spark.awaitStop();
     }
 }
+
 
