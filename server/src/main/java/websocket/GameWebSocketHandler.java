@@ -25,11 +25,10 @@ public class GameWebSocketHandler {
     private static final Map<Integer, Set<Session>> gameSessions = new HashMap<>();
     private static final Map<Session, Integer> sessionToGameID = new HashMap<>();
     private static final Map<Session, String> sessionToUsername = new HashMap<>();
-
+    private final Set<Integer> resignedGames = new HashSet<>();
     private final Gson gson = new Gson();
     private final MySQLAuthDAO authDAO = new MySQLAuthDAO();
     private final MySQLGameDAO gameDAO = new MySQLGameDAO();
-    private final GameService gameService = new GameService(gameDAO, authDAO);
 
     @OnWebSocketConnect
     public void onConnect(Session session) {
@@ -84,7 +83,7 @@ public class GameWebSocketHandler {
                     game.gameName(),
                     newGame
             );
-            gameDAO.updateGame(game); // Optional: persist the initialized game
+            gameDAO.updateGame(game);
         }
 
         gameSessions.computeIfAbsent(game.gameID(), k -> new HashSet<>()).add(session);
@@ -99,16 +98,41 @@ public class GameWebSocketHandler {
         broadcastExcept(session, game.gameID(), new NotificationMessage(auth.username() + " joined as " + role));
     }
 
-
     private void handleMakeMove(Session session, UserGameCommand command) throws DataAccessException {
+        AuthData auth = authDAO.getAuth(command.getAuthToken());
+        if (auth == null) {
+            send(session, new ErrorMessage("Error: Unauthorized"));
+            return;
+        }
+
         GameData game = gameDAO.getGame(command.getGameID());
         if (game == null) {
             send(session, new ErrorMessage("Error: Game not found"));
             return;
         }
 
+        if (resignedGames.contains(game.gameID())) {
+            send(session, new ErrorMessage("Error: Game is over. No moves allowed."));
+            return;
+        }
+
         ChessGame chessGame = game.game();
         ChessMove move = command.getMove();
+
+        String username = sessionToUsername.get(session);
+        ChessGame.TeamColor playerColor =
+                username.equals(game.whiteUsername()) ? ChessGame.TeamColor.WHITE :
+                        username.equals(game.blackUsername()) ? ChessGame.TeamColor.BLACK : null;
+
+        if (playerColor == null) {
+            send(session, new ErrorMessage("Error: Only white or black players can make moves."));
+            return;
+        }
+
+        if (playerColor != chessGame.getTeamTurn()) {
+            send(session, new ErrorMessage("Error: It's not your turn."));
+            return;
+        }
 
         try {
             chessGame.makeMove(move);
@@ -120,7 +144,7 @@ public class GameWebSocketHandler {
         gameDAO.updateGame(game);
 
         broadcast(game.gameID(), new LoadGameMessage(chessGame));
-        broadcast(game.gameID(), new NotificationMessage(sessionToUsername.get(session) + " moved: " + move));
+        broadcastExcept(session, game.gameID(), new NotificationMessage(username + " moved: " + move));
 
         if (chessGame.isInCheckmate(chessGame.getTeamTurn())) {
             broadcast(game.gameID(), new NotificationMessage("Checkmate! " + chessGame.getTeamTurn() + " is in checkmate."));
@@ -131,21 +155,60 @@ public class GameWebSocketHandler {
         }
     }
 
-    private void handleLeave(Session session, UserGameCommand command) {
+
+
+    private void handleLeave(Session session, UserGameCommand command) throws DataAccessException {
         Integer gameID = sessionToGameID.remove(session);
         String username = sessionToUsername.remove(session);
         if (gameID != null && username != null) {
             gameSessions.getOrDefault(gameID, new HashSet<>()).remove(session);
+
+            GameData game = gameDAO.getGame(gameID);
+            if (game != null) {
+                String white = game.whiteUsername();
+                String black = game.blackUsername();
+                boolean changed = false;
+
+                if (username.equals(white)) {
+                    game = new GameData(gameID, null, black, game.gameName(), game.game());
+                    changed = true;
+                } else if (username.equals(black)) {
+                    game = new GameData(gameID, white, null, game.gameName(), game.game());
+                    changed = true;
+                }
+
+                if (changed) {
+                    gameDAO.updateGame(game);
+                }
+            }
+
             broadcast(gameID, new NotificationMessage(username + " left the game."));
         }
     }
 
+
     private void handleResign(Session session, UserGameCommand command) throws DataAccessException {
         GameData game = gameDAO.getGame(command.getGameID());
-        if (game != null) {
-            broadcast(game.gameID(), new NotificationMessage(sessionToUsername.get(session) + " resigned. Game over."));
-            gameDAO.updateGame(game);
+        if (game == null) {
+            send(session, new ErrorMessage("Error: Game not found"));
+            return;
         }
+
+        String username = sessionToUsername.get(session);
+        if (!username.equals(game.whiteUsername()) && !username.equals(game.blackUsername())) {
+            send(session, new ErrorMessage("Error: Only players can resign."));
+            return;
+        }
+
+        if (resignedGames.contains(game.gameID())) {
+            send(session, new ErrorMessage("Error: Game is already over."));
+            return;
+        }
+
+        resignedGames.add(game.gameID());
+
+        broadcast(game.gameID(), new NotificationMessage(username + " resigned. Game over."));
+        gameDAO.updateGame(game);
     }
 
     private void send(Session session, ServerMessage message) {

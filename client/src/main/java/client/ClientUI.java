@@ -188,6 +188,9 @@ public class ClientUI {
 
             String uri = "ws://localhost:8080/ws";
             var gameplayUI = new GameplayUI(null, authToken, gameID);
+
+            gameplayUI.setPlayerTeam(teamColor.equals("WHITE") ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK);
+
             var wsClient = new GameSocketClient(uri, gameplayUI);
             gameplayUI.setSocketClient(wsClient);
             gameplayUI.start();
@@ -196,6 +199,7 @@ public class ClientUI {
             System.out.println("Error: " + msg);
         }
     }
+
 
     private void listGames() {
         try {

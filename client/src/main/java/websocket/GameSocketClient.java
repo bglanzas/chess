@@ -5,6 +5,9 @@ import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import org.eclipse.jetty.websocket.client.WebSocketClient;
 import websocket.messages.ServerMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
+import websocket.messages.ErrorMessage;
 import ui.GameplayUI;
 
 import java.io.IOException;
@@ -45,8 +48,26 @@ public class GameSocketClient {
 
     @OnWebSocketMessage
     public void onMessage(String msg) {
-        ServerMessage message = gson.fromJson(msg, ServerMessage.class);
-        gameplayUI.onMessage(message);
+        try {
+            ServerMessage baseMessage = gson.fromJson(msg, ServerMessage.class);
+            switch (baseMessage.getServerMessageType()) {
+                case LOAD_GAME -> {
+                    LoadGameMessage m = gson.fromJson(msg, LoadGameMessage.class);
+                    gameplayUI.onMessage(m);
+                }
+                case NOTIFICATION -> {
+                    NotificationMessage m = gson.fromJson(msg, NotificationMessage.class);
+                    gameplayUI.onMessage(m);
+                }
+                case ERROR -> {
+                    ErrorMessage m = gson.fromJson(msg, ErrorMessage.class);
+                    gameplayUI.onMessage(m);
+                }
+                default -> System.out.println("Unknown message type received");
+            }
+        } catch (Exception e) {
+            System.out.println("Failed to process message: " + e.getMessage());
+        }
     }
 
     @OnWebSocketError

@@ -23,6 +23,7 @@ public class GameplayUI {
     private ChessGame game;
     private boolean whitePerspective = true;
     private final ChessboardDrawer drawer = new ChessboardDrawer();
+    private TeamColor playerTeam;
 
     public GameplayUI(GameSocketClient wsClient, String authToken, int gameID){
         this.wsClient = wsClient;
@@ -74,6 +75,11 @@ public class GameplayUI {
         System.out.println("  leave       - Leave the game");
     }
 
+    public void setPlayerTeam(TeamColor team) {
+        this.playerTeam = team;
+    }
+
+
     private void drawBoard(){
         if (game != null){
             ChessBoard board = game.getBoard();
@@ -84,25 +90,45 @@ public class GameplayUI {
     }
 
     private void makeMove(Scanner scanner){
-        try{
-            System.out.print("Start (row col): ");
-            int r1 = scanner.nextInt();
-            int c1 = scanner.nextInt();
-            System.out.print("End (row col): ");
-            int r2 = scanner.nextInt();
-            int c2 = scanner.nextInt();
-            scanner.nextLine();
+        try {
+            System.out.print("Start (e.g. e2): ");
+            String startInput = scanner.nextLine().trim().toLowerCase();
 
-            ChessPosition start = new ChessPosition(r1, c1);
-            ChessPosition end = new ChessPosition(r2, c2);
+            System.out.print("End (e.g. e4): ");
+            String endInput = scanner.nextLine().trim().toLowerCase();
+
+            System.out.println("Parsing input: " + startInput + " to " + endInput);
+
+            ChessPosition start = parsePosition(startInput);
+            ChessPosition end = parsePosition(endInput);
             ChessMove move = new ChessMove(start, end, null);
 
             wsClient.send(new UserMoveCommand(authToken, gameID, move));
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid input: " + e.getMessage());
         } catch (Exception e) {
-            System.out.println("Invalid input. Please try again.");
-            scanner.nextLine();
+            e.printStackTrace();
         }
     }
+
+
+    private ChessPosition parsePosition(String input) {
+        if (input.length() != 2) throw new IllegalArgumentException("Input length must be 2 (like 'e2')");
+
+        char file = input.charAt(0);
+        char rank = input.charAt(1);
+
+        if (file < 'a' || file > 'h') throw new IllegalArgumentException("File must be between a and h");
+        if (rank < '1' || rank > '8') throw new IllegalArgumentException("Rank must be between 1 and 8");
+
+        int col = file - 'a' + 1;
+        int row = rank - '0';
+
+        return new ChessPosition(row, col);
+    }
+
+
+
 
     private void highlightMoves(Scanner scanner) {
         try {
@@ -132,8 +158,7 @@ public class GameplayUI {
             case LOAD_GAME -> {
                 if (message instanceof LoadGameMessage loadGame) {
                     this.game = loadGame.getGame();
-                    TeamColor team = game.getTeamTurn();
-                    this.whitePerspective = (team == TeamColor.WHITE);
+                    this.whitePerspective = (playerTeam == TeamColor.WHITE);
                     drawBoard();
                 } else {
                     System.out.println("[Error] Invalid LOAD_GAME message received.");
@@ -151,6 +176,7 @@ public class GameplayUI {
             }
         }
     }
+
 }
 
 
