@@ -96,6 +96,8 @@ public class ChessBoard {
         addPiece(startPosition, null);
     }
 
+
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {

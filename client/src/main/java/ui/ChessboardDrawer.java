@@ -1,5 +1,6 @@
 package client;
 
+import chess.ChessBoard;
 import ui.EscapeSequences;
 
 public class ChessboardDrawer {
@@ -7,7 +8,7 @@ public class ChessboardDrawer {
     private static final String LIGHT_SQUARE = EscapeSequences.SET_BG_COLOR_LIGHT_GREY;
     private static final String DARK_SQUARE = EscapeSequences.SET_BG_COLOR_DARK_GREY;
 
-    public void drawChessboard(boolean isWhitePerspective) {
+    public void drawChessboard(ChessBoard board, boolean isWhitePerspective) {
         System.out.print(EscapeSequences.ERASE_SCREEN);
 
         if (isWhitePerspective) {

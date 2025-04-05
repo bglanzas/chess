@@ -1,12 +1,15 @@
 package client;
 
+import chess.ChessGame;
+import chess.ChessBoard;
 import model.AuthData;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
 import model.GameData;
 import ui.GameplayUI;
 import websocket.GameSocketClient;
+import client.ChessboardDrawer;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
 
 public class ClientUI {
     private final ServerFacade serverFacade;
@@ -14,7 +17,8 @@ public class ClientUI {
     private boolean isLoggedIn = false;
     private String authToken;
     private final Map<Integer, Integer> gameNumberToID = new HashMap<>();
-    private final client.ChessboardDrawer chessboardDrawer = new client.ChessboardDrawer();
+    private final ChessboardDrawer chessboardDrawer = new ChessboardDrawer();
+
     public ClientUI(ServerFacade serverFacade){
         this.serverFacade = serverFacade;
     }
@@ -80,7 +84,7 @@ public class ClientUI {
         }
     }
 
-    private void  displayPreloginHelp(){
+    private void displayPreloginHelp(){
         System.out.println("Available commands:");
         System.out.println(" help");
         System.out.println(" quit");
@@ -94,7 +98,7 @@ public class ClientUI {
         System.out.println(" logout");
         System.out.println(" create game");
         System.out.println(" list games");
-        System.out.println(" join game");
+        System.out.println(" play game");
         System.out.println(" observe game");
     }
 
@@ -193,10 +197,6 @@ public class ClientUI {
         }
     }
 
-
-
-
-
     private void listGames() {
         try {
             var games = serverFacade.listGames(authToken);
@@ -255,11 +255,12 @@ public class ClientUI {
             System.out.printf("Now observing game '%s' (%d) from %s's perspective.%n",
                     game.gameName(), gameID, whitePerspective ? "White" : "Black");
 
-            chessboardDrawer.drawChessboard(whitePerspective);
+            ChessBoard board = game.game().getBoard();
+            chessboardDrawer.drawChessboard(board, whitePerspective);
         } catch (Exception e) {
             String msg = e.getMessage().replace("Error: ", "").trim();
             System.out.println("Error: " + msg);
         }
     }
-
 }
+

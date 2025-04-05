@@ -3,6 +3,8 @@ package ui;
 import chess.ChessMove;
 import chess.ChessGame;
 import chess.ChessPosition;
+import chess.ChessGame.TeamColor;
+import chess.ChessBoard;
 import websocket.commands.UserGameCommand;
 import websocket.commands.UserMoveCommand;
 import websocket.messages.ServerMessage;
@@ -10,6 +12,7 @@ import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ErrorMessage;
 import websocket.GameSocketClient;
+import client.ChessboardDrawer;
 
 import java.util.Scanner;
 
@@ -18,6 +21,8 @@ public class GameplayUI {
     private final String authToken;
     private final int gameID;
     private ChessGame game;
+    private boolean whitePerspective = true;
+    private final ChessboardDrawer drawer = new ChessboardDrawer();
 
     public GameplayUI(GameSocketClient wsClient, String authToken, int gameID){
         this.wsClient = wsClient;
@@ -71,8 +76,9 @@ public class GameplayUI {
 
     private void drawBoard(){
         if (game != null){
-            System.out.println("[Board Drawn Here");
-        }else{
+            ChessBoard board = game.getBoard();
+            drawer.drawChessboard(board, whitePerspective);
+        } else {
             System.out.println("Game not loaded yet.");
         }
     }
@@ -124,13 +130,30 @@ public class GameplayUI {
     public void onMessage(ServerMessage message){
         switch (message.getServerMessageType()){
             case LOAD_GAME -> {
-                this.game = ((LoadGameMessage) message).getGame();
-                drawBoard();
+                if (message instanceof LoadGameMessage loadGame) {
+                    this.game = loadGame.getGame();
+                    TeamColor team = game.getTeamTurn();
+                    this.whitePerspective = (team == TeamColor.WHITE);
+                    drawBoard();
+                } else {
+                    System.out.println("[Error] Invalid LOAD_GAME message received.");
+                }
             }
-            case NOTIFICATION -> System.out.println("[Notification] " + ((NotificationMessage) message).getMessage());
-            case ERROR -> System.out.println("[Error] " + ((ErrorMessage) message).getErrorMessage());
+            case NOTIFICATION -> {
+                if (message instanceof NotificationMessage note) {
+                    System.out.println("[Notification] " + note.getMessage());
+                }
+            }
+            case ERROR -> {
+                if (message instanceof ErrorMessage err) {
+                    System.out.println("[Error] " + err.getErrorMessage());
+                }
+            }
         }
     }
 }
+
+
+
 
 

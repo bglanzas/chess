@@ -75,6 +75,18 @@ public class GameWebSocketHandler {
             return;
         }
 
+        if (game.game() == null) {
+            ChessGame newGame = new ChessGame();
+            game = new GameData(
+                    game.gameID(),
+                    game.whiteUsername(),
+                    game.blackUsername(),
+                    game.gameName(),
+                    newGame
+            );
+            gameDAO.updateGame(game); // Optional: persist the initialized game
+        }
+
         gameSessions.computeIfAbsent(game.gameID(), k -> new HashSet<>()).add(session);
         sessionToGameID.put(session, game.gameID());
         sessionToUsername.put(session, auth.username());
@@ -86,6 +98,7 @@ public class GameWebSocketHandler {
 
         broadcastExcept(session, game.gameID(), new NotificationMessage(auth.username() + " joined as " + role));
     }
+
 
     private void handleMakeMove(Session session, UserGameCommand command) throws DataAccessException {
         GameData game = gameDAO.getGame(command.getGameID());
