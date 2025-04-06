@@ -4,7 +4,7 @@ import chess.ChessGame;
 import chess.ChessBoard;
 import model.AuthData;
 import model.GameData;
-import ui.GameplayUI;
+import client.GameplayUI;
 import websocket.GameSocketClient;
 import client.ChessboardDrawer;
 import java.util.HashMap;

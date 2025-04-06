@@ -1,5 +1,7 @@
 package ui;
-
+import chess.ChessPiece;
+import chess.ChessGame.TeamColor;
+import chess.ChessPiece.PieceType;
 /**
  * This class contains constants and functions relating to ANSI Escape Sequences that are useful in the Client display
  */
@@ -62,4 +64,18 @@ public class EscapeSequences {
     public static final String EMPTY = " \u2003 ";
 
     public static String moveCursorToLocation(int x, int y) { return UNICODE_ESCAPE + "[" + y + ";" + x + "H"; }
+
+    public static String getSymbol(ChessPiece piece) {
+        if (piece == null) return EMPTY;
+
+        return switch (piece.getPieceType()) {
+            case KING -> piece.getTeamColor() == TeamColor.WHITE ? WHITE_KING : BLACK_KING;
+            case QUEEN -> piece.getTeamColor() == TeamColor.WHITE ? WHITE_QUEEN : BLACK_QUEEN;
+            case ROOK -> piece.getTeamColor() == TeamColor.WHITE ? WHITE_ROOK : BLACK_ROOK;
+            case BISHOP -> piece.getTeamColor() == TeamColor.WHITE ? WHITE_BISHOP : BLACK_BISHOP;
+            case KNIGHT -> piece.getTeamColor() == TeamColor.WHITE ? WHITE_KNIGHT : BLACK_KNIGHT;
+            case PAWN -> piece.getTeamColor() == TeamColor.WHITE ? WHITE_PAWN : BLACK_PAWN;
+        };
+    }
+
 }
