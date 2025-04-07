@@ -171,9 +171,17 @@ public class ClientUI {
     private void playGame(Scanner scanner) {
         listGames();
         System.out.print("Enter game number to join: ");
-        int gameNumber = Integer.parseInt(scanner.nextLine());
-        Integer gameID = gameNumberToID.get(gameNumber);
+        String input = scanner.nextLine().trim();
 
+        int gameNumber;
+        try {
+            gameNumber = Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter a valid game number.");
+            return;
+        }
+
+        Integer gameID = gameNumberToID.get(gameNumber);
         if (gameID == null) {
             System.out.println("Invalid game number.");
             return;
@@ -199,6 +207,7 @@ public class ClientUI {
             System.out.println("Error: " + msg);
         }
     }
+
 
 
     private void listGames() {

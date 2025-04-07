@@ -114,7 +114,8 @@ public class GameplayUI {
             if (game != null) {
                 Collection<ChessMove> moves = game.validMoves(position);
                 Collection<ChessPosition> highlights = moves.stream().map(ChessMove::getEndPosition).toList();
-                drawer.drawHighlightedBoard(game.getBoard(), whitePerspective, highlights);
+                drawer.drawHighlightedBoard(game.getBoard(), whitePerspective, highlights, position);
+
             } else {
                 System.out.println("Game not loaded yet.");
             }

@@ -4,8 +4,9 @@ import chess.ChessBoard;
 import chess.ChessPiece;
 import chess.ChessPosition;
 import ui.EscapeSequences;
-import java.util.Collection;
 
+import java.util.Collection;
+import java.util.List;
 
 public class ChessboardDrawer {
 
@@ -16,13 +17,14 @@ public class ChessboardDrawer {
         System.out.print(EscapeSequences.ERASE_SCREEN);
 
         if (isWhitePerspective) {
-            drawBoard(board, 8, 1, 1, 8); // rows 8→1, cols 1→8
+            drawBoard(board, 8, 1, 1, 8, null, null);
         } else {
-            drawBoard(board, 1, 8, 8, 1); // rows 1→8, cols 8→1
+            drawBoard(board, 1, 8, 8, 1, null, null);
         }
     }
 
-    private void drawBoard(ChessBoard board, int rowStart, int rowEnd, int colStart, int colEnd) {
+    private void drawBoard(ChessBoard board, int rowStart, int rowEnd, int colStart, int colEnd,
+                           Collection<ChessPosition> highlights, Collection<ChessPosition> selected) {
         System.out.print("   ");
         for (int col = colStart; col != colEnd + Integer.signum(colEnd - colStart); col += Integer.signum(colEnd - colStart)) {
             System.out.print(" " + (char) ('a' + col - 1) + " ");
@@ -32,10 +34,7 @@ public class ChessboardDrawer {
         for (int row = rowStart; row != rowEnd + Integer.signum(rowEnd - rowStart); row += Integer.signum(rowEnd - rowStart)) {
             System.out.print(row + " ");
             for (int col = colStart; col != colEnd + Integer.signum(colEnd - colStart); col += Integer.signum(colEnd - colStart)) {
-                ChessPosition pos = new ChessPosition(row, col);
-                ChessPiece piece = board.getPiece(pos);
-                drawSquare(row, col, board, null);
-
+                drawSquare(row, col, board, highlights, selected);
             }
             System.out.println(" " + row);
         }
@@ -47,12 +46,15 @@ public class ChessboardDrawer {
         System.out.println();
     }
 
-    private void drawSquare(int row, int col, ChessBoard board, Collection<ChessPosition> highlights) {
+    private void drawSquare(int row, int col, ChessBoard board,
+                            Collection<ChessPosition> highlights, Collection<ChessPosition> selected) {
         ChessPosition current = new ChessPosition(row, col);
         boolean isLightSquare = (row + col) % 2 == 0;
         String bgColor = isLightSquare ? DARK_SQUARE : LIGHT_SQUARE;
 
-        if (highlights != null && highlights.contains(current)) {
+        if (selected != null && selected.contains(current)) {
+            bgColor = EscapeSequences.SET_BG_COLOR_YELLOW;
+        } else if (highlights != null && highlights.contains(current)) {
             bgColor = EscapeSequences.SET_BG_COLOR_GREEN;
         }
 
@@ -61,42 +63,47 @@ public class ChessboardDrawer {
         System.out.print(bgColor + symbol + EscapeSequences.RESET_BG_COLOR);
     }
 
-
-
-    public void drawHighlightedBoard(ChessBoard board, boolean isWhitePerspective, Collection<ChessPosition> highlights) {
+    public void drawHighlightedBoard(ChessBoard board, boolean isWhitePerspective,
+                                     Collection<ChessPosition> highlights, ChessPosition selected) {
         System.out.print(EscapeSequences.ERASE_SCREEN);
+        Collection<ChessPosition> selectedList = selected == null ? null : List.of(selected);
+
         if (isWhitePerspective) {
-            drawWhitePerspective(board, highlights);
+            drawWhitePerspective(board, highlights, selectedList);
         } else {
-            drawBlackPerspective(board, highlights);
+            drawBlackPerspective(board, highlights, selectedList);
         }
     }
 
-    private void drawWhitePerspective(ChessBoard board, Collection<ChessPosition> highlights) {
+    private void drawWhitePerspective(ChessBoard board,
+                                      Collection<ChessPosition> highlights,
+                                      Collection<ChessPosition> selected) {
         System.out.println("   a  b  c  d  e  f  g  h");
         for (int row = 8; row >= 1; row--) {
             System.out.print(row + " ");
             for (int col = 1; col <= 8; col++) {
-                drawSquare(row, col, board, highlights);
+                drawSquare(row, col, board, highlights, selected);
             }
             System.out.println(" " + row);
         }
         System.out.println("   a  b  c  d  e  f  g  h");
     }
 
-    private void drawBlackPerspective(ChessBoard board, Collection<ChessPosition> highlights) {
+    private void drawBlackPerspective(ChessBoard board,
+                                      Collection<ChessPosition> highlights,
+                                      Collection<ChessPosition> selected) {
         System.out.println("   h  g  f  e  d  c  b  a");
         for (int row = 1; row <= 8; row++) {
             System.out.print(row + " ");
             for (int col = 8; col >= 1; col--) {
-                drawSquare(row, col, board, highlights);
+                drawSquare(row, col, board, highlights, selected);
             }
             System.out.println(" " + row);
         }
         System.out.println("   h  g  f  e  d  c  b  a");
     }
 
-    private String getPieceSymbol(chess.ChessPiece piece) {
+    private String getPieceSymbol(ChessPiece piece) {
         return switch (piece.getTeamColor()) {
             case WHITE -> switch (piece.getPieceType()) {
                 case KING -> EscapeSequences.WHITE_KING;
@@ -116,8 +123,8 @@ public class ChessboardDrawer {
             };
         };
     }
-
 }
+
 
 
 
