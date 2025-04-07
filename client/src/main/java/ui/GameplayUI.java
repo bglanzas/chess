@@ -42,7 +42,6 @@ public class GameplayUI {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
-            System.out.print("\n[gameplay] > ");
             String input = scanner.nextLine().trim().toLowerCase();
             switch (input) {
                 case "help" -> printHelp();
@@ -144,7 +143,11 @@ public class GameplayUI {
             case LOAD_GAME -> {
                 if (message instanceof LoadGameMessage loadGame) {
                     this.game = loadGame.getGame();
-                    this.whitePerspective = (playerTeam == TeamColor.WHITE);
+
+                    if (playerTeam != null) {
+                        this.whitePerspective = (playerTeam == TeamColor.WHITE);
+                    }
+
                     drawBoard();
                 } else {
                     System.out.println("[Error] Invalid LOAD_GAME message received.");
@@ -162,4 +165,10 @@ public class GameplayUI {
             }
         }
     }
+
+
+    public void setWhitePerspective(boolean white) {
+        this.whitePerspective = white;
+    }
+
 }

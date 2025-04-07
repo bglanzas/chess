@@ -92,11 +92,26 @@ public class GameWebSocketHandler {
 
         send(session, new LoadGameMessage(game.game()));
 
-        String role = (auth.username().equals(game.whiteUsername())) ? "(White)" :
-                (auth.username().equals(game.blackUsername())) ? "(Black)" : "(Observer)";
+        String username = auth.username();
+        String role;
+        if (username.equals(game.whiteUsername())) {
+            role = "white";
+        } else if (username.equals(game.blackUsername())) {
+            role = "black";
+        } else {
+            role = "observer";
+        }
 
-        broadcastExcept(session, game.gameID(), new NotificationMessage(auth.username() + " joined as " + role));
+        String message = switch (role) {
+            case "white" -> username + " joined the game as white.";
+            case "black" -> username + " joined the game as black.";
+            default -> username + " joined the game as an observer.";
+        };
+
+        broadcast(game.gameID(), new NotificationMessage(message));
     }
+
+
 
     private void handleMakeMove(Session session, UserGameCommand command) throws DataAccessException {
         AuthData auth = authDAO.getAuth(command.getAuthToken());

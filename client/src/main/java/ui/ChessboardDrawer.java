@@ -50,18 +50,22 @@ public class ChessboardDrawer {
                             Collection<ChessPosition> highlights, Collection<ChessPosition> selected) {
         ChessPosition current = new ChessPosition(row, col);
         boolean isLightSquare = (row + col) % 2 == 0;
-        String bgColor = isLightSquare ? DARK_SQUARE : LIGHT_SQUARE;
+
+        String bgColor;
 
         if (selected != null && selected.contains(current)) {
             bgColor = EscapeSequences.SET_BG_COLOR_YELLOW;
         } else if (highlights != null && highlights.contains(current)) {
-            bgColor = EscapeSequences.SET_BG_COLOR_GREEN;
+            bgColor = isLightSquare ? EscapeSequences.SET_BG_COLOR_GREEN : EscapeSequences.SET_BG_COLOR_DARK_GREEN;
+        } else {
+            bgColor = isLightSquare ? DARK_SQUARE : LIGHT_SQUARE;
         }
 
-        var piece = board.getPiece(current);
+        ChessPiece piece = board.getPiece(current);
         String symbol = (piece == null) ? EscapeSequences.EMPTY : getPieceSymbol(piece);
         System.out.print(bgColor + symbol + EscapeSequences.RESET_BG_COLOR);
     }
+
 
     public void drawHighlightedBoard(ChessBoard board, boolean isWhitePerspective,
                                      Collection<ChessPosition> highlights, ChessPosition selected) {

@@ -253,6 +253,7 @@ public class ClientUI {
             System.out.println("Invalid input. Please enter a valid game number.");
             return;
         }
+
         Integer gameID = gameNumberToID.get(gameNumber);
         if (gameID == null) {
             System.out.println("Invalid game number. Please list games again.");
@@ -268,12 +269,18 @@ public class ClientUI {
             System.out.printf("Now observing game '%s' (%d) from %s's perspective.%n",
                     game.gameName(), gameID, whitePerspective ? "White" : "Black");
 
-            ChessBoard board = game.game().getBoard();
-            chessboardDrawer.drawChessboard(board, whitePerspective);
+            String uri = "ws://localhost:8080/ws";
+            var gameplayUI = new GameplayUI(null, authToken, gameID);
+            gameplayUI.setWhitePerspective(whitePerspective); // 👈 You must add this setter if not present
+            var wsClient = new GameSocketClient(uri, gameplayUI);
+            gameplayUI.setSocketClient(wsClient);
+            gameplayUI.start();
+
         } catch (Exception e) {
             String msg = e.getMessage().replace("Error: ", "").trim();
             System.out.println("Error: " + msg);
         }
     }
+
 }
 
