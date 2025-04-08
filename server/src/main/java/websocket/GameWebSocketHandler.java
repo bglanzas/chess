@@ -2,6 +2,7 @@ package websocket;
 
 import chess.ChessGame;
 import chess.ChessMove;
+import chess.ChessPosition;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import dataaccess.MySQLAuthDAO;
@@ -29,6 +30,7 @@ public class GameWebSocketHandler {
     private final Gson gson = new Gson();
     private final MySQLAuthDAO authDAO = new MySQLAuthDAO();
     private final MySQLGameDAO gameDAO = new MySQLGameDAO();
+    private final Set<Integer> completedGames = new HashSet<>();
 
     @OnWebSocketConnect
     public void onConnect(Session session) {
@@ -108,10 +110,8 @@ public class GameWebSocketHandler {
             default -> username + " joined the game as an observer.";
         };
 
-        broadcast(game.gameID(), new NotificationMessage(message));
+        broadcastExcept(session, game.gameID(), new NotificationMessage(message));
     }
-
-
 
     private void handleMakeMove(Session session, UserGameCommand command) throws DataAccessException {
         AuthData auth = authDAO.getAuth(command.getAuthToken());
@@ -126,7 +126,7 @@ public class GameWebSocketHandler {
             return;
         }
 
-        if (resignedGames.contains(game.gameID())) {
+        if (resignedGames.contains(game.gameID()) || completedGames.contains(game.gameID())) {
             send(session, new ErrorMessage("Error: Game is over. No moves allowed."));
             return;
         }
@@ -159,18 +159,22 @@ public class GameWebSocketHandler {
         gameDAO.updateGame(game);
 
         broadcast(game.gameID(), new LoadGameMessage(chessGame));
-        broadcastExcept(session, game.gameID(), new NotificationMessage(username + " moved: " + move));
+        String moveDescription = formatMove(move);
+        broadcastExcept(session, game.gameID(), new NotificationMessage(username + " moved " + moveDescription));
 
-        if (chessGame.isInCheckmate(chessGame.getTeamTurn())) {
-            broadcast(game.gameID(), new NotificationMessage("Checkmate! " + chessGame.getTeamTurn() + " is in checkmate."));
-        } else if (chessGame.isInCheck(chessGame.getTeamTurn())) {
-            broadcast(game.gameID(), new NotificationMessage(chessGame.getTeamTurn() + " is in check."));
-        } else if (chessGame.isInStalemate(chessGame.getTeamTurn())) {
+        ChessGame.TeamColor nextTurn = chessGame.getTeamTurn();
+        String nextPlayer = (nextTurn == ChessGame.TeamColor.WHITE) ? game.whiteUsername() : game.blackUsername();
+
+        if (chessGame.isInCheckmate(nextTurn)) {
+            broadcast(game.gameID(), new NotificationMessage("Checkmate! " + nextPlayer + " is in checkmate."));
+            completedGames.add(game.gameID());
+        } else if (chessGame.isInStalemate(nextTurn)) {
             broadcast(game.gameID(), new NotificationMessage("Stalemate! The game is a draw."));
+            completedGames.add(game.gameID());
+        } else if (chessGame.isInCheck(nextTurn)) {
+            broadcast(game.gameID(), new NotificationMessage(nextPlayer + " is in check."));
         }
     }
-
-
 
     private void handleLeave(Session session, UserGameCommand command) throws DataAccessException {
         Integer gameID = sessionToGameID.remove(session);
@@ -221,7 +225,7 @@ public class GameWebSocketHandler {
         }
 
         resignedGames.add(game.gameID());
-
+        completedGames.add(game.gameID());
         broadcast(game.gameID(), new NotificationMessage(username + " resigned. Game over."));
         gameDAO.updateGame(game);
     }
@@ -251,5 +255,16 @@ public class GameWebSocketHandler {
             }
         }
     }
+
+    private String formatMove(ChessMove move) {
+        return positionToString(move.getStartPosition()) + " to " + positionToString(move.getEndPosition());
+    }
+
+    private String positionToString(ChessPosition pos) {
+        char file = (char) ('a' + pos.getColumn() - 1);
+        int rank = pos.getRow();
+        return "" + file + rank;
+    }
+
 }
 

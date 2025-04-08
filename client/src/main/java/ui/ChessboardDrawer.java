@@ -25,7 +25,7 @@ public class ChessboardDrawer {
 
     private void drawBoard(ChessBoard board, int rowStart, int rowEnd, int colStart, int colEnd,
                            Collection<ChessPosition> highlights, Collection<ChessPosition> selected) {
-        System.out.print("   ");
+        System.out.print("  ");
         for (int col = colStart; col != colEnd + Integer.signum(colEnd - colStart); col += Integer.signum(colEnd - colStart)) {
             System.out.print(" " + (char) ('a' + col - 1) + " ");
         }
@@ -39,7 +39,7 @@ public class ChessboardDrawer {
             System.out.println(" " + row);
         }
 
-        System.out.print("   ");
+        System.out.print("  ");
         for (int col = colStart; col != colEnd + Integer.signum(colEnd - colStart); col += Integer.signum(colEnd - colStart)) {
             System.out.print(" " + (char) ('a' + col - 1) + " ");
         }
