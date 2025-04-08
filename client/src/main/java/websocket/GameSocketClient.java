@@ -1,25 +1,22 @@
 package websocket;
 
+import client.GameplayUI;
 import com.google.gson.Gson;
-import org.eclipse.jetty.websocket.api.Session;
-import org.eclipse.jetty.websocket.api.annotations.*;
-import org.eclipse.jetty.websocket.client.WebSocketClient;
-import websocket.messages.ServerMessage;
+import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
-import websocket.messages.ErrorMessage;
-import client.GameplayUI;
+import websocket.messages.ServerMessage;
 
+import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
-import java.util.concurrent.Future;
 
-@WebSocket
+@ClientEndpoint
 public class GameSocketClient {
     private final Gson gson = new Gson();
     private final String uri;
-    private Session session;
     private final GameplayUI gameplayUI;
+    private Session session;
 
     public GameSocketClient(String uri, GameplayUI gameplayUI) {
         this.uri = uri;
@@ -28,10 +25,8 @@ public class GameSocketClient {
 
     public void connect() {
         try {
-            WebSocketClient client = new WebSocketClient();
-            client.start();
-            Future<Session> fut = client.connect(this, URI.create(uri));
-            session = fut.get();
+            WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+            container.connectToServer(this, URI.create(uri));
         } catch (Exception e) {
             throw new RuntimeException("WebSocket connection failed", e);
         }
@@ -40,13 +35,19 @@ public class GameSocketClient {
     public void send(Object message) {
         try {
             String json = gson.toJson(message);
-            session.getRemote().sendString(json);
+            session.getBasicRemote().sendText(json);
         } catch (IOException e) {
             System.out.println("Failed to send message: " + e.getMessage());
         }
     }
 
-    @OnWebSocketMessage
+    @OnOpen
+    public void onOpen(Session session) {
+        this.session = session;
+        System.out.println("WebSocket connection established.");
+    }
+
+    @OnMessage
     public void onMessage(String msg) {
         try {
             ServerMessage baseMessage = gson.fromJson(msg, ServerMessage.class);
@@ -70,14 +71,15 @@ public class GameSocketClient {
         }
     }
 
-    @OnWebSocketError
-    public void onError(Throwable t) {
-        System.out.println("WebSocket error: " + t.getMessage());
+    @OnError
+    public void onError(Session session, Throwable throwable) {
+        System.out.println("WebSocket error: " + throwable.getMessage());
     }
 
-    @OnWebSocketClose
-    public void onClose(int statusCode, String reason) {
-        System.out.println("WebSocket closed: " + reason);
+    @OnClose
+    public void onClose(Session session, CloseReason closeReason) {
+        System.out.println("WebSocket closed: " + closeReason.getReasonPhrase());
     }
 }
+
 
