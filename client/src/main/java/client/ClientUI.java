@@ -84,23 +84,24 @@ public class ClientUI {
         }
     }
 
-    private void displayPreloginHelp(){
+    private void displayPreloginHelp() {
         System.out.println("Available commands:");
-        System.out.println(" help");
-        System.out.println(" quit");
-        System.out.println(" login");
-        System.out.println(" register");
+        System.out.println("  help        - Show available commands");
+        System.out.println("  quit        - Exit the program");
+        System.out.println("  login       - Log in to an existing account");
+        System.out.println("  register    - Create a new account");
     }
 
-    private void displayPostloginHelp(){
+    private void displayPostloginHelp() {
         System.out.println("Available commands:");
-        System.out.println(" help");
-        System.out.println(" logout");
-        System.out.println(" create game");
-        System.out.println(" list games");
-        System.out.println(" play game");
-        System.out.println(" observe game");
+        System.out.println("  help         - Show available commands");
+        System.out.println("  logout       - Log out of your account");
+        System.out.println("  create game  - Create a new chess game");
+        System.out.println("  list games   - List all existing games");
+        System.out.println("  play game    - Join a game as a player");
+        System.out.println("  observe game - Watch an ongoing game as an observer");
     }
+
 
     private void quit(){
         System.out.println("Exiting Chess! Bye!");
