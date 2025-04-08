@@ -129,8 +129,8 @@ public class GameplayUI {
         char file = input.charAt(0);
         char rank = input.charAt(1);
 
-        if (file < 'a' || file > 'h') {throw new IllegalArgumentException("File must be between a and h");}
-        if (rank < '1' || rank > '8') {throw new IllegalArgumentException("Rank must be between 1 and 8");}
+        if (file < 'a' || file > 'h') {throw new IllegalArgumentException("Letter must be between a and h");}
+        if (rank < '1' || rank > '8') {throw new IllegalArgumentException("Number be between 1 and 8");}
 
         int col = file - 'a' + 1;
         int row = rank - '0';
