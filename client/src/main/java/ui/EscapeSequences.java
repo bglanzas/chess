@@ -65,17 +65,6 @@ public class EscapeSequences {
 
     public static String moveCursorToLocation(int x, int y) { return UNICODE_ESCAPE + "[" + y + ";" + x + "H"; }
 
-    public static String getSymbol(ChessPiece piece) {
-        if (piece == null) return EMPTY;
 
-        return switch (piece.getPieceType()) {
-            case KING -> piece.getTeamColor() == TeamColor.WHITE ? WHITE_KING : BLACK_KING;
-            case QUEEN -> piece.getTeamColor() == TeamColor.WHITE ? WHITE_QUEEN : BLACK_QUEEN;
-            case ROOK -> piece.getTeamColor() == TeamColor.WHITE ? WHITE_ROOK : BLACK_ROOK;
-            case BISHOP -> piece.getTeamColor() == TeamColor.WHITE ? WHITE_BISHOP : BLACK_BISHOP;
-            case KNIGHT -> piece.getTeamColor() == TeamColor.WHITE ? WHITE_KNIGHT : BLACK_KNIGHT;
-            case PAWN -> piece.getTeamColor() == TeamColor.WHITE ? WHITE_PAWN : BLACK_PAWN;
-        };
-    }
 
 }

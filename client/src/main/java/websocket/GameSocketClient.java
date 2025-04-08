@@ -71,15 +71,6 @@ public class GameSocketClient {
         }
     }
 
-    @OnError
-    public void onError(Session session, Throwable throwable) {
-        System.out.println("WebSocket error: " + throwable.getMessage());
-    }
-
-    @OnClose
-    public void onClose(Session session, CloseReason closeReason) {
-        System.out.println("WebSocket closed: " + closeReason.getReasonPhrase());
-    }
 }
 
 

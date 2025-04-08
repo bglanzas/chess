@@ -11,7 +11,6 @@ import model.AuthData;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.*;
-import service.GameService;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 import websocket.messages.LoadGameMessage;
@@ -23,9 +22,9 @@ import java.util.*;
 
 @WebSocket
 public class GameWebSocketHandler {
-    private static final Map<Integer, Set<Session>> gameSessions = new HashMap<>();
-    private static final Map<Session, Integer> sessionToGameID = new HashMap<>();
-    private static final Map<Session, String> sessionToUsername = new HashMap<>();
+    private static final Map<Integer, Set<Session>> GAME_SESSION = new HashMap<>();
+    private static final Map<Session, Integer> SESSION_TO_GAMEID = new HashMap<>();
+    private static final Map<Session, String> SESSION_TO_USERNAME = new HashMap<>();
     private final Set<Integer> resignedGames = new HashSet<>();
     private final Gson gson = new Gson();
     private final MySQLAuthDAO authDAO = new MySQLAuthDAO();
@@ -39,11 +38,11 @@ public class GameWebSocketHandler {
 
     @OnWebSocketClose
     public void onClose(Session session, int statusCode, String reason) {
-        Integer gameID = sessionToGameID.remove(session);
-        String username = sessionToUsername.remove(session);
+        Integer gameID = SESSION_TO_GAMEID.remove(session);
+        String username = SESSION_TO_USERNAME.remove(session);
 
         if (gameID != null) {
-            gameSessions.getOrDefault(gameID, new HashSet<>()).remove(session);
+            GAME_SESSION.getOrDefault(gameID, new HashSet<>()).remove(session);
             broadcast(gameID, new NotificationMessage(username + " disconnected."));
         }
     }
@@ -88,9 +87,9 @@ public class GameWebSocketHandler {
             gameDAO.updateGame(game);
         }
 
-        gameSessions.computeIfAbsent(game.gameID(), k -> new HashSet<>()).add(session);
-        sessionToGameID.put(session, game.gameID());
-        sessionToUsername.put(session, auth.username());
+        GAME_SESSION.computeIfAbsent(game.gameID(), k -> new HashSet<>()).add(session);
+        SESSION_TO_GAMEID.put(session, game.gameID());
+        SESSION_TO_USERNAME.put(session, auth.username());
 
         send(session, new LoadGameMessage(game.game()));
 
@@ -134,7 +133,7 @@ public class GameWebSocketHandler {
         ChessGame chessGame = game.game();
         ChessMove move = command.getMove();
 
-        String username = sessionToUsername.get(session);
+        String username = SESSION_TO_USERNAME.get(session);
         ChessGame.TeamColor playerColor =
                 username.equals(game.whiteUsername()) ? ChessGame.TeamColor.WHITE :
                         username.equals(game.blackUsername()) ? ChessGame.TeamColor.BLACK : null;
@@ -177,10 +176,10 @@ public class GameWebSocketHandler {
     }
 
     private void handleLeave(Session session, UserGameCommand command) throws DataAccessException {
-        Integer gameID = sessionToGameID.remove(session);
-        String username = sessionToUsername.remove(session);
+        Integer gameID = SESSION_TO_GAMEID.remove(session);
+        String username = SESSION_TO_USERNAME.remove(session);
         if (gameID != null && username != null) {
-            gameSessions.getOrDefault(gameID, new HashSet<>()).remove(session);
+            GAME_SESSION.getOrDefault(gameID, new HashSet<>()).remove(session);
 
             GameData game = gameDAO.getGame(gameID);
             if (game != null) {
@@ -213,7 +212,7 @@ public class GameWebSocketHandler {
             return;
         }
 
-        String username = sessionToUsername.get(session);
+        String username = SESSION_TO_USERNAME.get(session);
         if (!username.equals(game.whiteUsername()) && !username.equals(game.blackUsername())) {
             send(session, new ErrorMessage("Error: Only players can resign."));
             return;
@@ -240,7 +239,7 @@ public class GameWebSocketHandler {
 
     private void broadcast(int gameID, ServerMessage message) {
         String json = gson.toJson(message);
-        for (Session s : gameSessions.getOrDefault(gameID, Set.of())) {
+        for (Session s : GAME_SESSION.getOrDefault(gameID, Set.of())) {
             if (s.isOpen()) {
                 s.getRemote().sendStringByFuture(json);
             }
@@ -249,7 +248,7 @@ public class GameWebSocketHandler {
 
     private void broadcastExcept(Session exclude, int gameID, ServerMessage message) {
         String json = gson.toJson(message);
-        for (Session s : gameSessions.getOrDefault(gameID, Set.of())) {
+        for (Session s : GAME_SESSION.getOrDefault(gameID, Set.of())) {
             if (!s.equals(exclude) && s.isOpen()) {
                 s.getRemote().sendStringByFuture(json);
             }
