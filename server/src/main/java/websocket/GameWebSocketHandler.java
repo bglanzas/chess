@@ -155,11 +155,19 @@ public class GameWebSocketHandler {
             return;
         }
 
+        boolean wasPromotion = move.getPromotionPiece() != null;
+
         gameDAO.updateGame(game);
 
         broadcast(game.gameID(), new LoadGameMessage(chessGame));
         String moveDescription = formatMove(move);
         broadcastExcept(session, game.gameID(), new NotificationMessage(username + " moved " + moveDescription));
+
+        if (wasPromotion) {
+            broadcast(game.gameID(), new NotificationMessage(
+                    username + " promoted a pawn to " + move.getPromotionPiece().name() + "!"
+            ));
+        }
 
         ChessGame.TeamColor nextTurn = chessGame.getTeamTurn();
         String nextPlayer = (nextTurn == ChessGame.TeamColor.WHITE) ? game.whiteUsername() : game.blackUsername();
@@ -174,6 +182,7 @@ public class GameWebSocketHandler {
             broadcast(game.gameID(), new NotificationMessage(nextPlayer + " is in check."));
         }
     }
+
 
     private void handleLeave(Session session, UserGameCommand command) throws DataAccessException {
         Integer gameID = SESSION_TO_GAMEID.remove(session);

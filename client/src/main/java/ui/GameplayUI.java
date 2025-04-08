@@ -84,18 +84,37 @@ public class GameplayUI {
 
     private void makeMove(Scanner scanner) {
         try {
-            System.out.print("Start (e.g. e2): ");
+            System.out.print("Start (e.g. e7): ");
             String startInput = scanner.nextLine().trim().toLowerCase();
 
-            System.out.print("End (e.g. e4): ");
+            System.out.print("End (e.g. e8): ");
             String endInput = scanner.nextLine().trim().toLowerCase();
 
             System.out.println("Parsing input: " + startInput + " to " + endInput);
 
             ChessPosition start = parsePosition(startInput);
             ChessPosition end = parsePosition(endInput);
-            ChessMove move = new ChessMove(start, end, null);
 
+            ChessPiece.PieceType promotion = null;
+
+            if (game != null) {
+                ChessPiece piece = game.getBoard().getPiece(start);
+                if (piece != null && piece.getPieceType() == ChessPiece.PieceType.PAWN) {
+                    int promotionRow = (piece.getTeamColor() == ChessGame.TeamColor.WHITE) ? 8 : 1;
+                    if (end.getRow() == promotionRow) {
+                        System.out.print("Promote to (QUEEN, ROOK, BISHOP, KNIGHT): ");
+                        String promoInput = scanner.nextLine().trim().toUpperCase();
+                        try {
+                            promotion = ChessPiece.PieceType.valueOf(promoInput);
+                        } catch (IllegalArgumentException e) {
+                            System.out.println("Invalid promotion piece, defaulting to QUEEN.");
+                            promotion = ChessPiece.PieceType.QUEEN;
+                        }
+                    }
+                }
+            }
+
+            ChessMove move = new ChessMove(start, end, promotion);
             wsClient.send(new UserMoveCommand(authToken, gameID, move));
         } catch (IllegalArgumentException e) {
             System.out.println("Invalid input: " + e.getMessage());
@@ -103,6 +122,7 @@ public class GameplayUI {
             e.printStackTrace();
         }
     }
+
 
     private void highlightMoves(Scanner scanner) {
         try {
